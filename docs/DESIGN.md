@@ -60,18 +60,31 @@ of "a current can't be negative," so this fault is invisible to every
 failure-counting metric and only shows up by pulling `mean`/`min` into
 implausible territory.
 
+**failure_rate_percent measures communication failures only; physical
+implausibility (e.g. negative current) is not flagged as a failure but is
+visible via IQR outlier detection and min/max — a documented scope
+boundary, not a gap.** In the live run below, both injected
+`negative_value` samples were in fact caught by IQR outlier detection
+(their indices appear in `analyzed_results.outliers.indices`) — but that's
+`analyzer.py`'s general-purpose statistical-distance check doing
+incidental double duty, not a domain-validity rule; a negative reading
+close enough to zero wouldn't necessarily clear the IQR threshold. The
+only mechanism that's guaranteed to surface it is a human (or the HTML
+report/`compare` output) actually looking at `min`.
+
 A live run against all three real emulators with `fault_rate=0.25`
-confirmed exactly this split: each device reported `injected_faults=8` but
-only 6 counted as `failures` — the other 2 were negative-value corruptions
-that passed as "successes." Comparing that run against a clean baseline
-with the new `compare` command made the effect concrete: `min` went from
-`0.0044` to `-0.0552` while `failure_rate_percent` only moved from
-`0%` to `30%`, understating how much of the run's data was actually
-untrustworthy. That gap is the point: it demonstrates why "zero reported
-failures" isn't the same as "clean data," and is a concrete argument for a
-future extension (domain sanity bounds in the analyzer, e.g. rejecting or
-flagging negative currents) that this submission deliberately doesn't
-implement, to avoid scope creep beyond what was asked.
+confirmed the failure/injection split: each device reported
+`injected_faults=8` but only 6 counted as `failures` — the other 2 were
+negative-value corruptions that passed as "successes." Comparing that run
+against a clean baseline with the new `compare` command made the effect
+concrete: `min` went from `0.0044` to `-0.0552` while
+`failure_rate_percent` only moved from `0%` to `30%`, understating how
+much of the run's data was actually untrustworthy. That gap is the point:
+it demonstrates why "zero reported failures" isn't the same as "clean
+data," and is a concrete argument for a future extension (domain sanity
+bounds in the analyzer, e.g. rejecting or flagging negative currents) that
+this submission deliberately doesn't implement, to avoid scope creep
+beyond what was asked.
 
 ## HTML report: hand-rolled SVG instead of a charting library
 
