@@ -44,3 +44,25 @@ numbers to match the fix above.
 **Why:** `main.py` is the entry point, not one of the `Ammeters/*.py`
 driver classes the "don't touch emulator files" rule protects — fixing
 its client calls is explicitly in scope per the spec.
+
+## 3. Emulator server socket never set `SO_REUSEADDR`
+
+**Symptom:** Re-running `main.py` shortly after a previous run could
+raise `OSError: [Errno 48] Address already in use`, forcing a wait for
+the OS to release the port (`TIME_WAIT`).
+
+**Root cause:** `Ammeters/base_ammeter.py:18-19` created the listening
+socket and called `bind()` without ever setting `SO_REUSEADDR`, so the
+kernel refused to rebind a port still in `TIME_WAIT` from the prior
+process.
+
+**Fix:** Added
+`s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)` immediately
+after socket creation, before `bind()`, in
+`AmmeterEmulatorBase.start_server`.
+
+**Why:** This touches an emulator file (`Ammeters/base_ammeter.py`),
+which is normally off-limits — but it's a documented real bug (see
+`docs/investigation.md`), not a rewrite of emulator behavior, and doesn't
+change any measurement logic or protocol. `SO_REUSEADDR` is the standard,
+minimal fix for this class of restart failure.
