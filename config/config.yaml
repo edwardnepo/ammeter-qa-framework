@@ -51,3 +51,14 @@ result_management:
   results_dir: "results"
   runs_subdir: "runs"
   index_filename: "index.json"
+
+fault_injection:
+  enabled: false
+  fault_rate: 0.25
+  seed: 1234
+  fault_types:
+    - "timeout"
+    - "disconnect"
+    - "corrupted_response"
+    - "negative_value"
+  injected_timeout_seconds: 2.5

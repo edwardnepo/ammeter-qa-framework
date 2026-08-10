@@ -4,11 +4,12 @@ import argparse
 import json
 import sys
 from pathlib import Path
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 import yaml
 
 from src.drivers.registry import DriverResolutionError
+from src.faults.injector import FaultInjectingDriver, FaultInjectionConfig
 from src.testing.store import list_runs, load_run
 from src.testing.test_framework import AmmeterTestFramework
 from src.utils.config import load_config
@@ -18,8 +19,7 @@ def build_parser() -> argparse.ArgumentParser:
     """Build the top-level argparse parser.
 
     Returns:
-        An ArgumentParser with `run`, `list`, and `show` subcommands.
-        (`compare` is deferred to a later layer.)
+        An ArgumentParser with `run`, `list`, `show`, and `compare` subcommands.
     """
     parser = argparse.ArgumentParser(prog="ammeter-qa", description="Ammeter QA test runner")
     parser.add_argument("--config", default="config/config.yaml", help="Path to config.yaml")
@@ -27,6 +27,11 @@ def build_parser() -> argparse.ArgumentParser:
 
     run_parser = subparsers.add_parser("run", help="Run a test against one ammeter or 'all'")
     run_parser.add_argument("target", help="Ammeter name (e.g. 'greenlee') or 'all'")
+    run_parser.add_argument(
+        "--fault-injection",
+        action="store_true",
+        help="Wrap each device's driver in a FaultInjectingDriver, using config['fault_injection']",
+    )
 
     list_parser = subparsers.add_parser("list", help="List saved runs")
     list_parser.add_argument("--device", default=None, help="Only show runs for this device")
@@ -44,10 +49,11 @@ def _fmt(value: Optional[float], digits: int = 4) -> str:
 
 
 def _cmd_run(args: argparse.Namespace) -> int:
-    """Handle `run <target>`.
+    """Handle `run <target>` [--fault-injection].
 
     Args:
-        args: Parsed CLI arguments (`args.config`, `args.target`).
+        args: Parsed CLI arguments (`args.config`, `args.target`,
+            `args.fault_injection`).
 
     Returns:
         0 if every targeted device ran with zero failed samples, else 1.
@@ -60,23 +66,46 @@ def _cmd_run(args: argparse.Namespace) -> int:
 
     devices = sorted(framework.config["ammeters"]) if args.target == "all" else [args.target]
 
+    fault_config: Optional[FaultInjectionConfig] = None
+    if args.fault_injection:
+        try:
+            fault_config = FaultInjectionConfig.from_config(
+                framework.config.get("fault_injection", {})
+            )
+        except (KeyError, ValueError) as e:
+            print(f"invalid fault_injection config: {e}", file=sys.stderr)
+            return 1
+
     exit_code = 0
     for device in devices:
+        driver_wrapper = None
+        injected_driver_holder: Dict[str, FaultInjectingDriver] = {}
+        if fault_config is not None:
+            unit = framework.config["ammeters"].get(device, {}).get("unit", "A")
+
+            def driver_wrapper(driver, _device=device, _unit=unit):
+                wrapped = FaultInjectingDriver(driver, fault_config, name=_device, unit=_unit)
+                injected_driver_holder["driver"] = wrapped
+                return wrapped
+
         try:
-            result = framework.run_test(device)
+            result = framework.run_test(device, driver_wrapper=driver_wrapper)
         except (KeyError, DriverResolutionError, ValueError, ConnectionError, OSError) as e:
             print(f"[{device}] FAILED: {e}", file=sys.stderr)
             exit_code = 1
             continue
 
         status = "PASS" if result["success"] else "FAIL"
-        print(
+        line = (
             f"[{device}] {status}  run_id={result['run_id']}  "
             f"samples={result['sample_count']}  success={result['success_count']}  "
             f"failures={result['failure_count']}  mean={_fmt(result['mean'])}  "
             f"cv%={_fmt(result['coefficient_of_variation_percent'])}  "
             f"outliers={result['outlier_count']}"
         )
+        if "driver" in injected_driver_holder:
+            line += f"  injected_faults={injected_driver_holder['driver'].injected_count}"
+        print(line)
         if not result["success"]:
             exit_code = 1
 

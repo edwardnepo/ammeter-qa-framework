@@ -72,7 +72,7 @@ def test_cmd_run_failure_path(fake_framework, capsys):
 
 
 def test_cmd_run_all_continues_on_error(fake_framework, capsys):
-    def side_effect(device):
+    def side_effect(device, driver_wrapper=None):
         if device == "entes":
             raise ConnectionError("unreachable")
         return canned_result(run_id=f"run-{device}", device=device)
@@ -86,6 +86,46 @@ def test_cmd_run_all_continues_on_error(fake_framework, capsys):
     assert "circutor" in captured.out  # ran despite entes failing
     assert "greenlee" in captured.out  # continued past entes
     assert "entes" in captured.err
+
+
+def test_cmd_run_without_fault_injection_flag_passes_none_wrapper(fake_framework, capsys):
+    fake_framework.run_test.return_value = canned_result()
+
+    cli.main(["run", "greenlee"])
+
+    _, kwargs = fake_framework.run_test.call_args
+    assert kwargs.get("driver_wrapper") is None
+    assert "injected_faults" not in capsys.readouterr().out
+
+
+def test_cmd_run_fault_injection_invalid_config_exits_1(fake_framework, capsys):
+    # fake_framework.config carries no "fault_injection" section at all.
+    exit_code = cli.main(["run", "greenlee", "--fault-injection"])
+
+    assert exit_code == 1
+    assert "fault_injection" in capsys.readouterr().err
+    fake_framework.run_test.assert_not_called()
+
+
+def test_cmd_run_fault_injection_prints_injected_count(fake_framework, capsys):
+    fake_framework.config["fault_injection"] = {
+        "fault_rate": 1.0,
+        "seed": 1,
+        "fault_types": ["timeout"],
+        "injected_timeout_seconds": 0.001,
+    }
+
+    def side_effect(device, driver_wrapper=None):
+        assert driver_wrapper is not None
+        driver_wrapper(MagicMock())  # simulate what real run_test does with the hook
+        return canned_result()
+
+    fake_framework.run_test.side_effect = side_effect
+
+    exit_code = cli.main(["run", "greenlee", "--fault-injection"])
+
+    assert exit_code == 0
+    assert "injected_faults=0" in capsys.readouterr().out
 
 
 def test_no_command_exits_2():
