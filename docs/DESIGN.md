@@ -1,5 +1,65 @@
 # Design Decisions and Tradeoffs
 
+## Why "accuracy" isn't measured (and what is, instead)
+
+The three supplied emulators (`Ammeters/Greenlee_Ammeter.py`,
+`Entes_Ammeter.py`, `Circutor_Ammeter.py`) each synthesize a current
+reading from their own independently random inputs, using three different
+formulas and three different input ranges:
+
+- **Greenlee** — Ohm's Law, `I = V / R`, with `V` drawn uniformly from
+  1–10V and `R` from 0.1–100Ω.
+- **ENTES** — Hall effect, `I = B * K`, with `B` drawn from 0.01–0.1T and
+  `K` (calibration factor) from 500–2000.
+- **CIRCUTOR** — Rogowski coil integration, `I = ∫V dt` approximated over
+  a handful of samples drawn from 0.1–1.0V with a random time step.
+
+None of the three shares an input, a formula, or a value range with either
+of the others, and none of them is driven by a real physical current that
+a reference instrument could independently confirm. There is no shared
+ground truth to compare a reading against, on any device, ever. **This
+means metrological accuracy — "how close is this reading to the true
+current?" — cannot be measured by this framework, for any of the three
+devices, no matter how the framework is built.** That is a property of the
+supplied emulators, not a limitation of the sampling/analysis code; no
+amount of additional instrumentation on this side of the TCP connection
+can manufacture a ground truth that was never generated on the other
+side.
+
+**What the framework measures instead is precision and repeatability**:
+for a given device, how tightly do its own readings cluster together
+across repeated samples? `src/testing/analyzer.py::analyze_samples`
+computes this per run — mean, median, stdev, min, max, coefficient of
+variation, and IQR-based outlier detection — and `src/cli.py`'s `compare`
+command diffs these same precision metrics between two runs, whether
+that's the same device sampled twice (spread over time / drift) or two
+different devices side by side (relative spread, not absolute agreement,
+since there's nothing to agree against). A low coefficient of variation
+says "this device is internally consistent"; it says nothing about
+whether the number itself is correct, because correctness was never
+knowable here.
+
+**Optional sanity check — self-consistency against each device's own
+formula.** A weaker, but genuine, check *is* available: each emulator's
+formula is public (it's in the driver's docstring / this document), so if
+an emulator ever exposed its own random inputs (`V`/`R` for Greenlee,
+`B`/`K` for ENTES, the voltage samples/time step for CIRCUTOR) alongside
+the computed current, that current could be recomputed independently and
+diffed against what the device reported — not an accuracy check against
+reality, but a self-consistency check that the device is internally
+applying its own documented formula correctly. This is *not* implemented
+in the current codebase: the emulators' TCP protocol only returns the
+final computed current, never the intermediate `V`/`R`/`B`/`K`/samples
+that produced it, so there is nothing on the wire for a client to
+recompute from. Implementing it would require either extending the
+emulators' protocol to expose their random inputs (out of scope — the
+emulators are the "hardware" this project doesn't rewrite) or duplicating
+each emulator's random-generation logic client-side just to compare against
+itself, which would test the test framework's own copy of the formula, not
+the emulator. It's noted here as the correct framing of what a "sanity
+check" can mean in this setup, and as a documented, deliberate scope
+boundary rather than an oversight.
+
 ## Why the live smoke test matters: a bug mocked tests couldn't see
 
 After building the core testing layer (`sampler.py`, `analyzer.py`,
