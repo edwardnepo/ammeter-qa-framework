@@ -1,8 +1,8 @@
 testing:
   sampling:
-    measurements_count: NULL
-    total_duration_seconds: NULL
-    sampling_frequency_hz: NULL
+    measurements_count: 20
+    total_duration_seconds: null
+    sampling_frequency_hz: 2.0
 
 ammeters:
   greenlee:
@@ -32,8 +32,22 @@ ammeters:
 
 analysis:
   statistical_metrics:
+    - mean
+    - median
+    - stdev
+    - min
+    - max
+    - coefficient_of_variation
+    - failure_rate
+  outlier_detection:
+    method: "iqr"
+    iqr_multiplier: 1.5
+    min_samples_for_detection: 4
   visualization:
     enabled: true
-    plot_types:
+    plot_types: []
 
 result_management:
+  results_dir: "results"
+  runs_subdir: "runs"
+  index_filename: "index.json"
