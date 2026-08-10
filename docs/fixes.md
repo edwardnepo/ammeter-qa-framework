@@ -66,3 +66,27 @@ which is normally off-limits — but it's a documented real bug (see
 `docs/investigation.md`), not a rewrite of emulator behavior, and doesn't
 change any measurement logic or protocol. `SO_REUSEADDR` is the standard,
 minimal fix for this class of restart failure.
+
+## 4. `main.py` used a fixed 5-second sleep as its only readiness check
+
+**Symptom:** `main.py` had no real signal that the emulator threads had
+actually started listening — just `time.sleep(5)`, with a comment
+admitting this was fragile ("if you have problem restarting the servers
+... try increasing sleep time"). Slow startup would race the client
+calls; a fast startup wasted 5 seconds every run.
+
+**Root cause:** `main.py:32` (pre-fix) had no handshake or ready signal
+between the emulator threads and the client calls that depend on them.
+
+**Fix:** Added a `wait_for_port(host, port, timeout)` helper that polls
+each port with `socket.create_connection`, retrying on
+`ConnectionRefusedError`/`OSError` until it succeeds or an overall
+deadline is hit (raising `TimeoutError` if a server never comes up).
+`main.py` now calls this for all three ports instead of sleeping a fixed
+amount.
+
+**Why:** A successful TCP connect after the emulator's `listen()` call is
+a genuine readiness signal — the OS backlog queues the connection even
+before the server's `accept()` loop runs — so this needed no change to
+`Ammeters/base_ammeter.py` beyond the `SO_REUSEADDR` fix above. It also
+adapts to actual startup time instead of a guessed constant.
