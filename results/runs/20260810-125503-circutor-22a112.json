@@ -1,0 +1,262 @@
+{
+  "run_id": "20260810-125503-circutor-22a112",
+  "metadata": {
+    "device": "circutor",
+    "config_used": {
+      "ammeter": {
+        "driver": "src.drivers.circutor.CircutorDriver",
+        "host": "localhost",
+        "port": 5002,
+        "command": "MEASURE_CIRCUTOR -get_measurement -current",
+        "timeout_seconds": 2.0,
+        "retries": 3,
+        "retry_backoff_seconds": 0.5
+      },
+      "sampling": {
+        "measurements_count": 20,
+        "total_duration_seconds": null,
+        "sampling_frequency_hz": 2.0
+      },
+      "analysis": {
+        "statistical_metrics": [
+          "mean",
+          "median",
+          "stdev",
+          "min",
+          "max",
+          "coefficient_of_variation",
+          "failure_rate"
+        ],
+        "outlier_detection": {
+          "method": "iqr",
+          "iqr_multiplier": 1.5,
+          "min_samples_for_detection": 4
+        },
+        "visualization": {
+          "enabled": true,
+          "plot_types": []
+        }
+      }
+    },
+    "os": "macOS-26.5.2-arm64-arm-64bit",
+    "python_version": "3.9.6",
+    "start_time": 1786355693.5477052,
+    "end_time": 1786355703.05474,
+    "duration_seconds": 9.50703477859497,
+    "sampling_plan": {
+      "count": 20,
+      "rate_hz": 2.0,
+      "expected_duration_seconds": 10.0
+    },
+    "jitter": {
+      "per_sample_seconds": [
+        2.7920000000847267e-06,
+        0.005058000000000007,
+        0.0010210830000001447,
+        0.004706583000000153,
+        0.001550667000000061,
+        0.0050573749999998086,
+        0.001024541999999684,
+        0.005055707999999548,
+        0.003951041999999738,
+        0.005036666999999717,
+        0.001517457999999472,
+        0.0050495420000000735,
+        0.005057416999999731,
+        0.005057499999999493,
+        0.0015157080000003376,
+        0.00505250000000057,
+        0.00154929199999998,
+        0.0050540420000011466,
+        0.0015130000000009858,
+        0.005070583000000184
+      ],
+      "mean_seconds": 0.003445075050000046,
+      "max_seconds": 0.005070583000000184,
+      "stdev_seconds": 0.001915344839725281
+    }
+  },
+  "raw_results": [
+    {
+      "value": 0.05640776780112054,
+      "unit": "A",
+      "timestamp": 1786355693.548268,
+      "device": "circutor",
+      "raw_response": "0.05640776780112054",
+      "error": null
+    },
+    {
+      "value": 0.0043789264170909226,
+      "unit": "A",
+      "timestamp": 1786355694.055084,
+      "device": "circutor",
+      "raw_response": "0.0043789264170909226",
+      "error": null
+    },
+    {
+      "value": 0.052227729608543334,
+      "unit": "A",
+      "timestamp": 1786355694.550694,
+      "device": "circutor",
+      "raw_response": "0.052227729608543334",
+      "error": null
+    },
+    {
+      "value": 0.030983649000437652,
+      "unit": "A",
+      "timestamp": 1786355695.05442,
+      "device": "circutor",
+      "raw_response": "0.030983649000437652",
+      "error": null
+    },
+    {
+      "value": 0.02554390223740831,
+      "unit": "A",
+      "timestamp": 1786355695.55096,
+      "device": "circutor",
+      "raw_response": "0.02554390223740831",
+      "error": null
+    },
+    {
+      "value": 0.03300715221757666,
+      "unit": "A",
+      "timestamp": 1786355696.0546439,
+      "device": "circutor",
+      "raw_response": "0.03300715221757666",
+      "error": null
+    },
+    {
+      "value": 0.02553832275200144,
+      "unit": "A",
+      "timestamp": 1786355696.549789,
+      "device": "circutor",
+      "raw_response": "0.02553832275200144",
+      "error": null
+    },
+    {
+      "value": 0.04555494966740507,
+      "unit": "A",
+      "timestamp": 1786355697.055037,
+      "device": "circutor",
+      "raw_response": "0.04555494966740507",
+      "error": null
+    },
+    {
+      "value": 0.04532251594847185,
+      "unit": "A",
+      "timestamp": 1786355697.553492,
+      "device": "circutor",
+      "raw_response": "0.04532251594847185",
+      "error": null
+    },
+    {
+      "value": 0.064435885378797,
+      "unit": "A",
+      "timestamp": 1786355698.054456,
+      "device": "circutor",
+      "raw_response": "0.064435885378797",
+      "error": null
+    },
+    {
+      "value": 0.03566919157015649,
+      "unit": "A",
+      "timestamp": 1786355698.5503502,
+      "device": "circutor",
+      "raw_response": "0.03566919157015649",
+      "error": null
+    },
+    {
+      "value": 0.035401035223663745,
+      "unit": "A",
+      "timestamp": 1786355699.054516,
+      "device": "circutor",
+      "raw_response": "0.035401035223663745",
+      "error": null
+    },
+    {
+      "value": 0.04287248034277238,
+      "unit": "A",
+      "timestamp": 1786355699.554576,
+      "device": "circutor",
+      "raw_response": "0.04287248034277238",
+      "error": null
+    },
+    {
+      "value": 0.017995655755181,
+      "unit": "A",
+      "timestamp": 1786355700.054943,
+      "device": "circutor",
+      "raw_response": "0.017995655755181",
+      "error": null
+    },
+    {
+      "value": 0.032115202943890364,
+      "unit": "A",
+      "timestamp": 1786355700.550143,
+      "device": "circutor",
+      "raw_response": "0.032115202943890364",
+      "error": null
+    },
+    {
+      "value": 0.011240686907234195,
+      "unit": "A",
+      "timestamp": 1786355701.05455,
+      "device": "circutor",
+      "raw_response": "0.011240686907234195",
+      "error": null
+    },
+    {
+      "value": 0.007089278116050456,
+      "unit": "A",
+      "timestamp": 1786355701.550385,
+      "device": "circutor",
+      "raw_response": "0.007089278116050456",
+      "error": null
+    },
+    {
+      "value": 0.01843969121469828,
+      "unit": "A",
+      "timestamp": 1786355702.054504,
+      "device": "circutor",
+      "raw_response": "0.01843969121469828",
+      "error": null
+    },
+    {
+      "value": 0.0404457342622352,
+      "unit": "A",
+      "timestamp": 1786355702.550514,
+      "device": "circutor",
+      "raw_response": "0.0404457342622352",
+      "error": null
+    },
+    {
+      "value": 0.04204597348570441,
+      "unit": "A",
+      "timestamp": 1786355703.0547059,
+      "device": "circutor",
+      "raw_response": "0.04204597348570441",
+      "error": null
+    }
+  ],
+  "analyzed_results": {
+    "sample_count": 20,
+    "success_count": 20,
+    "failure_count": 0,
+    "failure_rate_percent": 0.0,
+    "mean": 0.033335786542521964,
+    "median": 0.03420409372062021,
+    "stdev": 0.016186308069882218,
+    "min": 0.0043789264170909226,
+    "max": 0.064435885378797,
+    "coefficient_of_variation_percent": 48.555350716670596,
+    "outliers": {
+      "method": "iqr",
+      "lower_bound": -0.005818321697106745,
+      "upper_bound": 0.07306697580897964,
+      "count": 0,
+      "indices": [],
+      "values": []
+    },
+    "notes": []
+  }
+}

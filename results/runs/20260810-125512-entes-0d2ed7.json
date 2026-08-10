@@ -1,0 +1,268 @@
+{
+  "run_id": "20260810-125512-entes-0d2ed7",
+  "metadata": {
+    "device": "entes",
+    "config_used": {
+      "ammeter": {
+        "driver": "src.drivers.entes.EntesDriver",
+        "host": "localhost",
+        "port": 5001,
+        "command": "MEASURE_ENTES -get_data",
+        "timeout_seconds": 2.0,
+        "retries": 3,
+        "retry_backoff_seconds": 0.5
+      },
+      "sampling": {
+        "measurements_count": 20,
+        "total_duration_seconds": null,
+        "sampling_frequency_hz": 2.0
+      },
+      "analysis": {
+        "statistical_metrics": [
+          "mean",
+          "median",
+          "stdev",
+          "min",
+          "max",
+          "coefficient_of_variation",
+          "failure_rate"
+        ],
+        "outlier_detection": {
+          "method": "iqr",
+          "iqr_multiplier": 1.5,
+          "min_samples_for_detection": 4
+        },
+        "visualization": {
+          "enabled": true,
+          "plot_types": []
+        }
+      }
+    },
+    "os": "macOS-26.5.2-arm64-arm-64bit",
+    "python_version": "3.9.6",
+    "start_time": 1786355703.0848498,
+    "end_time": 1786355712.590564,
+    "duration_seconds": 9.505714178085327,
+    "sampling_plan": {
+      "count": 20,
+      "rate_hz": 2.0,
+      "expected_duration_seconds": 10.0
+    },
+    "jitter": {
+      "per_sample_seconds": [
+        4.2499999999279225e-06,
+        0.005037292000000804,
+        0.0050572920000000465,
+        0.0034557500000005348,
+        0.005067334000001367,
+        0.005029500000000908,
+        0.005038834000000492,
+        0.004345875000000277,
+        0.005056459000000402,
+        0.004329292000001317,
+        0.0025739170000012024,
+        0.005052749999999051,
+        0.005043625000000773,
+        0.004311542000001722,
+        0.0050485419999990455,
+        0.004326875000002062,
+        0.005016875000000809,
+        0.003188041999999669,
+        0.005029709000000437,
+        0.003942208999999863
+      ],
+      "mean_seconds": 0.0042977982000005355,
+      "max_seconds": 0.005067334000001367,
+      "stdev_seconds": 0.0012480775491397287
+    }
+  },
+  "raw_results": [
+    {
+      "value": 81.03657739742751,
+      "unit": "A",
+      "timestamp": 1786355703.085712,
+      "device": "entes",
+      "raw_response": "81.03657739742751",
+      "error": null
+    },
+    {
+      "value": 95.63006063324696,
+      "unit": "A",
+      "timestamp": 1786355703.592009,
+      "device": "entes",
+      "raw_response": "95.63006063324696",
+      "error": null
+    },
+    {
+      "value": 78.22943523479726,
+      "unit": "A",
+      "timestamp": 1786355704.091864,
+      "device": "entes",
+      "raw_response": "78.22943523479726",
+      "error": null
+    },
+    {
+      "value": 88.15813105889113,
+      "unit": "A",
+      "timestamp": 1786355704.5897799,
+      "device": "entes",
+      "raw_response": "88.15813105889113",
+      "error": null
+    },
+    {
+      "value": 11.831441919974528,
+      "unit": "A",
+      "timestamp": 1786355705.0916648,
+      "device": "entes",
+      "raw_response": "11.831441919974528",
+      "error": null
+    },
+    {
+      "value": 41.90897108060814,
+      "unit": "A",
+      "timestamp": 1786355705.591403,
+      "device": "entes",
+      "raw_response": "41.90897108060814",
+      "error": null
+    },
+    {
+      "value": 77.80428486465641,
+      "unit": "A",
+      "timestamp": 1786355706.091398,
+      "device": "entes",
+      "raw_response": "77.80428486465641",
+      "error": null
+    },
+    {
+      "value": 37.40542290677125,
+      "unit": "A",
+      "timestamp": 1786355706.59127,
+      "device": "entes",
+      "raw_response": "37.40542290677125",
+      "error": null
+    },
+    {
+      "value": 177.90924354849324,
+      "unit": "A",
+      "timestamp": 1786355707.09213,
+      "device": "entes",
+      "raw_response": "177.90924354849324",
+      "error": null
+    },
+    {
+      "value": 168.47174252800684,
+      "unit": "A",
+      "timestamp": 1786355707.590807,
+      "device": "entes",
+      "raw_response": "168.47174252800684",
+      "error": null
+    },
+    {
+      "value": 74.29315926828585,
+      "unit": "A",
+      "timestamp": 1786355708.089817,
+      "device": "entes",
+      "raw_response": "74.29315926828585",
+      "error": null
+    },
+    {
+      "value": 47.290277634972995,
+      "unit": "A",
+      "timestamp": 1786355708.591717,
+      "device": "entes",
+      "raw_response": "47.290277634972995",
+      "error": null
+    },
+    {
+      "value": 115.16593945056393,
+      "unit": "A",
+      "timestamp": 1786355709.091629,
+      "device": "entes",
+      "raw_response": "115.16593945056393",
+      "error": null
+    },
+    {
+      "value": 21.066264974543667,
+      "unit": "A",
+      "timestamp": 1786355709.590095,
+      "device": "entes",
+      "raw_response": "21.066264974543667",
+      "error": null
+    },
+    {
+      "value": 69.32414702373327,
+      "unit": "A",
+      "timestamp": 1786355710.0912619,
+      "device": "entes",
+      "raw_response": "69.32414702373327",
+      "error": null
+    },
+    {
+      "value": 26.79117224356142,
+      "unit": "A",
+      "timestamp": 1786355710.590307,
+      "device": "entes",
+      "raw_response": "26.79117224356142",
+      "error": null
+    },
+    {
+      "value": 134.0447656262936,
+      "unit": "A",
+      "timestamp": 1786355711.0906692,
+      "device": "entes",
+      "raw_response": "134.0447656262936",
+      "error": null
+    },
+    {
+      "value": 31.40205177933261,
+      "unit": "A",
+      "timestamp": 1786355711.590156,
+      "device": "entes",
+      "raw_response": "31.40205177933261",
+      "error": null
+    },
+    {
+      "value": 42.88718821731623,
+      "unit": "A",
+      "timestamp": 1786355712.091854,
+      "device": "entes",
+      "raw_response": "42.88718821731623",
+      "error": null
+    },
+    {
+      "value": 89.55881930245837,
+      "unit": "A",
+      "timestamp": 1786355712.590556,
+      "device": "entes",
+      "raw_response": "89.55881930245837",
+      "error": null
+    }
+  ],
+  "analyzed_results": {
+    "sample_count": 20,
+    "success_count": 20,
+    "failure_count": 0,
+    "failure_rate_percent": 0.0,
+    "mean": 75.51045483469676,
+    "median": 76.04872206647113,
+    "stdev": 46.3119938969518,
+    "min": 11.831441919974528,
+    "max": 177.90924354849324,
+    "coefficient_of_variation_percent": 61.331896355723735,
+    "outliers": {
+      "method": "iqr",
+      "lower_bound": -34.657234359861,
+      "upper_bound": 166.51694803216543,
+      "count": 2,
+      "indices": [
+        8,
+        9
+      ],
+      "values": [
+        177.90924354849324,
+        168.47174252800684
+      ]
+    },
+    "notes": []
+  }
+}

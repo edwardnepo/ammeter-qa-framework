@@ -1,0 +1,268 @@
+{
+  "run_id": "20260810-125522-greenlee-60318c",
+  "metadata": {
+    "device": "greenlee",
+    "config_used": {
+      "ammeter": {
+        "driver": "src.drivers.greenlee.GreenleeDriver",
+        "host": "localhost",
+        "port": 5000,
+        "command": "MEASURE_GREENLEE -get_measurement",
+        "timeout_seconds": 2.0,
+        "retries": 3,
+        "retry_backoff_seconds": 0.5
+      },
+      "sampling": {
+        "measurements_count": 20,
+        "total_duration_seconds": null,
+        "sampling_frequency_hz": 2.0
+      },
+      "analysis": {
+        "statistical_metrics": [
+          "mean",
+          "median",
+          "stdev",
+          "min",
+          "max",
+          "coefficient_of_variation",
+          "failure_rate"
+        ],
+        "outlier_detection": {
+          "method": "iqr",
+          "iqr_multiplier": 1.5,
+          "min_samples_for_detection": 4
+        },
+        "visualization": {
+          "enabled": true,
+          "plot_types": []
+        }
+      }
+    },
+    "os": "macOS-26.5.2-arm64-arm-64bit",
+    "python_version": "3.9.6",
+    "start_time": 1786355712.5958662,
+    "end_time": 1786355722.102964,
+    "duration_seconds": 9.507097721099854,
+    "sampling_plan": {
+      "count": 20,
+      "rate_hz": 2.0,
+      "expected_duration_seconds": 10.0
+    },
+    "jitter": {
+      "per_sample_seconds": [
+        1.2082999997886645e-05,
+        0.00503641699999946,
+        0.0050399579999975685,
+        0.005037333000000643,
+        0.004942832999997648,
+        0.005039374999999069,
+        0.002448624999999538,
+        0.005039582999998515,
+        0.0001130419999988419,
+        0.005036374999999538,
+        0.005025082999999597,
+        0.00019641699999795037,
+        0.005054791999999253,
+        0.005043000000000575,
+        0.00014249999999904617,
+        0.0050582920000010745,
+        0.0008714579999988814,
+        0.0050610830000010765,
+        0.005060999999997762,
+        0.005039416999998991
+      ],
+      "mean_seconds": 0.003714933299999146,
+      "max_seconds": 0.0050610830000010765,
+      "stdev_seconds": 0.0021273623953488923
+    }
+  },
+  "raw_results": [
+    {
+      "value": 0.7396179732185261,
+      "unit": "A",
+      "timestamp": 1786355712.596798,
+      "device": "greenlee",
+      "raw_response": "0.7396179732185261",
+      "error": null
+    },
+    {
+      "value": 0.5721057314562985,
+      "unit": "A",
+      "timestamp": 1786355713.102755,
+      "device": "greenlee",
+      "raw_response": "0.5721057314562985",
+      "error": null
+    },
+    {
+      "value": 0.24342830360494044,
+      "unit": "A",
+      "timestamp": 1786355713.602714,
+      "device": "greenlee",
+      "raw_response": "0.24342830360494044",
+      "error": null
+    },
+    {
+      "value": 0.14143313053524242,
+      "unit": "A",
+      "timestamp": 1786355714.102133,
+      "device": "greenlee",
+      "raw_response": "0.14143313053524242",
+      "error": null
+    },
+    {
+      "value": 0.06336750209114557,
+      "unit": "A",
+      "timestamp": 1786355714.602283,
+      "device": "greenlee",
+      "raw_response": "0.06336750209114557",
+      "error": null
+    },
+    {
+      "value": 0.36956512192816204,
+      "unit": "A",
+      "timestamp": 1786355715.1032178,
+      "device": "greenlee",
+      "raw_response": "0.36956512192816204",
+      "error": null
+    },
+    {
+      "value": 0.11314475327782837,
+      "unit": "A",
+      "timestamp": 1786355715.5992918,
+      "device": "greenlee",
+      "raw_response": "0.11314475327782837",
+      "error": null
+    },
+    {
+      "value": 0.13923048487752412,
+      "unit": "A",
+      "timestamp": 1786355716.102774,
+      "device": "greenlee",
+      "raw_response": "0.13923048487752412",
+      "error": null
+    },
+    {
+      "value": 0.33811227368738184,
+      "unit": "A",
+      "timestamp": 1786355716.5975418,
+      "device": "greenlee",
+      "raw_response": "0.33811227368738184",
+      "error": null
+    },
+    {
+      "value": 0.09877342753837327,
+      "unit": "A",
+      "timestamp": 1786355717.102596,
+      "device": "greenlee",
+      "raw_response": "0.09877342753837327",
+      "error": null
+    },
+    {
+      "value": 0.10543758383256938,
+      "unit": "A",
+      "timestamp": 1786355717.601888,
+      "device": "greenlee",
+      "raw_response": "0.10543758383256938",
+      "error": null
+    },
+    {
+      "value": 0.62714802735507,
+      "unit": "A",
+      "timestamp": 1786355718.0972118,
+      "device": "greenlee",
+      "raw_response": "0.62714802735507",
+      "error": null
+    },
+    {
+      "value": 0.06080118817153911,
+      "unit": "A",
+      "timestamp": 1786355718.6023512,
+      "device": "greenlee",
+      "raw_response": "0.06080118817153911",
+      "error": null
+    },
+    {
+      "value": 0.16022231281367164,
+      "unit": "A",
+      "timestamp": 1786355719.102734,
+      "device": "greenlee",
+      "raw_response": "0.16022231281367164",
+      "error": null
+    },
+    {
+      "value": 0.05820505414881403,
+      "unit": "A",
+      "timestamp": 1786355719.597173,
+      "device": "greenlee",
+      "raw_response": "0.05820505414881403",
+      "error": null
+    },
+    {
+      "value": 0.12931146339266936,
+      "unit": "A",
+      "timestamp": 1786355720.102619,
+      "device": "greenlee",
+      "raw_response": "0.12931146339266936",
+      "error": null
+    },
+    {
+      "value": 0.0433632614897648,
+      "unit": "A",
+      "timestamp": 1786355720.5985012,
+      "device": "greenlee",
+      "raw_response": "0.0433632614897648",
+      "error": null
+    },
+    {
+      "value": 0.02408369292595173,
+      "unit": "A",
+      "timestamp": 1786355721.102684,
+      "device": "greenlee",
+      "raw_response": "0.02408369292595173",
+      "error": null
+    },
+    {
+      "value": 0.13664783235438627,
+      "unit": "A",
+      "timestamp": 1786355721.602535,
+      "device": "greenlee",
+      "raw_response": "0.13664783235438627",
+      "error": null
+    },
+    {
+      "value": 0.0465357438680986,
+      "unit": "A",
+      "timestamp": 1786355722.102956,
+      "device": "greenlee",
+      "raw_response": "0.0465357438680986",
+      "error": null
+    }
+  ],
+  "analyzed_results": {
+    "sample_count": 20,
+    "success_count": 20,
+    "failure_count": 0,
+    "failure_rate_percent": 0.0,
+    "mean": 0.2105267431283979,
+    "median": 0.1329796478735278,
+    "stdev": 0.21041745050697558,
+    "min": 0.02408369292595173,
+    "max": 0.7396179732185261,
+    "coefficient_of_variation_percent": 99.94808611020233,
+    "outliers": {
+      "method": "iqr",
+      "lower_bound": -0.24383413516021624,
+      "upper_bound": 0.573659354897011,
+      "count": 2,
+      "indices": [
+        0,
+        11
+      ],
+      "values": [
+        0.7396179732185261,
+        0.62714802735507
+      ]
+    },
+    "notes": []
+  }
+}
