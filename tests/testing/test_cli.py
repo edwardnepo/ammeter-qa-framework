@@ -9,11 +9,11 @@ from src.testing.sampler import SamplingPlan, SamplingResult, SampleTiming
 from src.testing.store import build_run_document, save_run
 
 
-def _seed_run(result_management, run_id="run-1", device="greenlee"):
+def _seed_run(result_management, run_id="run-1", device="greenlee", mean=10.0, failure_count=0):
     plan = SamplingPlan(count=1, rate_hz=1.0, expected_duration_seconds=1.0)
     samples = [
         MeasurementSample(
-            value=10.0, unit="A", timestamp=0.0, device=device, raw_response="10.0", error=None
+            value=mean, unit="A", timestamp=0.0, device=device, raw_response=str(mean), error=None
         )
     ]
     timings = [
@@ -23,8 +23,9 @@ def _seed_run(result_management, run_id="run-1", device="greenlee"):
         samples=samples, timings=timings, plan=plan, start_time=0.0, end_time=1.0
     )
     analysis = AnalysisResult(
-        sample_count=1, success_count=1, failure_count=0, failure_rate_percent=0.0,
-        mean=10.0, median=10.0, stdev=None, min=10.0, max=10.0,
+        sample_count=1, success_count=1 - failure_count, failure_count=failure_count,
+        failure_rate_percent=failure_count * 100.0,
+        mean=mean, median=mean, stdev=None, min=mean, max=mean,
         coefficient_of_variation_percent=None,
         outliers=OutlierReport(method="iqr", lower_bound=None, upper_bound=None, count=0, indices=[], values=[]),
         notes=[],
@@ -182,3 +183,52 @@ def test_cmd_show_not_found(seeded_config, capsys):
     exit_code = cli.main(["show", "does-not-exist"])
     assert exit_code == 1
     assert "could not load run" in capsys.readouterr().err
+
+
+# --- compare ---------------------------------------------------------------
+
+
+def test_cmd_compare_prints_metrics_and_delta(seeded_config, capsys):
+    _seed_run(seeded_config["result_management"], run_id="run-a", device="greenlee", mean=10.0)
+    _seed_run(seeded_config["result_management"], run_id="run-b", device="greenlee", mean=12.0)
+
+    exit_code = cli.main(["compare", "run-a", "run-b"])
+
+    assert exit_code == 0
+    out = capsys.readouterr().out
+    assert "run-a" in out and "run-b" in out
+    assert "10.0000" in out
+    assert "12.0000" in out
+    assert "+2.0000" in out  # delta = B - A
+
+
+def test_cmd_compare_run_a_not_found(seeded_config, capsys):
+    _seed_run(seeded_config["result_management"], run_id="run-b")
+
+    exit_code = cli.main(["compare", "does-not-exist", "run-b"])
+
+    assert exit_code == 1
+    err = capsys.readouterr().err
+    assert "could not load run A" in err
+    assert "does-not-exist" in err
+
+
+def test_cmd_compare_run_b_not_found(seeded_config, capsys):
+    _seed_run(seeded_config["result_management"], run_id="run-a")
+
+    exit_code = cli.main(["compare", "run-a", "does-not-exist"])
+
+    assert exit_code == 1
+    err = capsys.readouterr().err
+    assert "could not load run B" in err
+
+
+def test_cmd_compare_config_load_failure_exits_1(monkeypatch, capsys):
+    monkeypatch.setattr(
+        "src.cli.load_config", lambda path: (_ for _ in ()).throw(FileNotFoundError("missing"))
+    )
+
+    exit_code = cli.main(["compare", "run-a", "run-b"])
+
+    assert exit_code == 1
+    assert "could not load config" in capsys.readouterr().err

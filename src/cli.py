@@ -1,10 +1,10 @@
-"""Command-line interface for the ammeter QA framework: run / list / show."""
+"""Command-line interface for the ammeter QA framework: run / list / show / compare."""
 
 import argparse
 import json
 import sys
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 import yaml
 
@@ -39,6 +39,10 @@ def build_parser() -> argparse.ArgumentParser:
 
     show_parser = subparsers.add_parser("show", help="Show one saved run's full details")
     show_parser.add_argument("run_id", help="The run_id to show")
+
+    compare_parser = subparsers.add_parser("compare", help="Compare two saved runs")
+    compare_parser.add_argument("run_id_a", help="The first run_id (baseline)")
+    compare_parser.add_argument("run_id_b", help="The second run_id (compared against the first)")
 
     return parser
 
@@ -215,6 +219,63 @@ def _cmd_show(args: argparse.Namespace) -> int:
     return 0
 
 
+_COMPARE_METRICS = [
+    ("sample_count", "Samples", 0),
+    ("success_count", "Successes", 0),
+    ("failure_count", "Failures", 0),
+    ("failure_rate_percent", "Failure rate (%)", 2),
+    ("mean", "Mean", 4),
+    ("median", "Median", 4),
+    ("stdev", "Stdev", 4),
+    ("min", "Min", 4),
+    ("max", "Max", 4),
+    ("coefficient_of_variation_percent", "CV (%)", 2),
+]
+
+
+def _cmd_compare(args: argparse.Namespace) -> int:
+    """Handle `compare <run_id_a> <run_id_b>`.
+
+    Args:
+        args: Parsed CLI arguments (`args.config`, `args.run_id_a`, `args.run_id_b`).
+
+    Returns:
+        0 if both runs were found and the comparison table was printed,
+        else 1.
+    """
+    try:
+        config = load_config(args.config)
+    except (FileNotFoundError, yaml.YAMLError) as e:
+        print(f"could not load config: {e}", file=sys.stderr)
+        return 1
+
+    result_management = config.get("result_management", {})
+
+    runs: Dict[str, Dict[str, Any]] = {}
+    for label, run_id in (("A", args.run_id_a), ("B", args.run_id_b)):
+        try:
+            runs[label] = load_run(run_id, result_management)
+        except (FileNotFoundError, json.JSONDecodeError) as e:
+            print(f"could not load run {label} ('{run_id}'): {e}", file=sys.stderr)
+            return 1
+
+    analyzed_a = runs["A"]["analyzed_results"]
+    analyzed_b = runs["B"]["analyzed_results"]
+
+    print(f"Run A: {runs['A']['run_id']}  (device={runs['A']['metadata']['device']})")
+    print(f"Run B: {runs['B']['run_id']}  (device={runs['B']['metadata']['device']})")
+    print()
+    print(f"{'METRIC':<28} {'RUN A':>12} {'RUN B':>12} {'DELTA (B-A)':>14}")
+    for key, label, digits in _COMPARE_METRICS:
+        a = analyzed_a[key]
+        b = analyzed_b[key]
+        delta = (b - a) if (a is not None and b is not None) else None
+        delta_str = "n/a" if delta is None else f"{delta:+.{digits}f}"
+        print(f"{label:<28} {_fmt(a, digits):>12} {_fmt(b, digits):>12} {delta_str:>14}")
+
+    return 0
+
+
 def main(argv: Optional[List[str]] = None) -> int:
     """CLI entry point.
 
@@ -233,6 +294,8 @@ def main(argv: Optional[List[str]] = None) -> int:
         return _cmd_list(args)
     if args.command == "show":
         return _cmd_show(args)
+    if args.command == "compare":
+        return _cmd_compare(args)
 
     parser.error(f"unknown command: {args.command}")
     return 2
