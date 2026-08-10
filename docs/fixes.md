@@ -107,3 +107,26 @@ documented it without the `-current` flag.
 **Why:** The emulator represents the "hardware" and stays untouched;
 this is a documentation bug, not an emulator bug, so the README was
 fixed to match the code rather than the other way around.
+
+## 6. `TestLogger` never actually logged anything
+
+**Symptom:** Calls to `TestLogger.info()`/`.error()`/etc. produced no
+output at all — not to the console, not to the file the class had just
+created a directory for.
+
+**Root cause:** `src/utils/logger.py:_setup_logger` created
+`results/logs/` and computed a timestamped log file path, but never
+attached a `logging.FileHandler` (or any handler) to the logger it
+returned, and never set a level. A logger with no handlers and no level
+configured effectively drops every call.
+
+**Fix:** `_setup_logger` now creates a `logging.FileHandler` pointed at
+the computed timestamped path, attaches a formatter, sets the logger to
+`DEBUG`, and adds the handler — guarded by `if not logger.handlers`
+since `logging.getLogger(name)` returns the same instance for repeated
+calls with the same test name, so re-instantiating `TestLogger` for the
+same name won't stack duplicate handlers.
+
+**Why:** This is the minimal fix to make the existing class actually do
+what it already claimed to do; a full logging redesign is deferred to
+whatever the new `src/` architecture builds.

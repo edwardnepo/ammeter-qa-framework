@@ -1,6 +1,6 @@
 import logging
-import os
 from datetime import datetime
+from pathlib import Path
 
 class TestLogger:
     def __init__(self, test_name: str):
@@ -9,19 +9,24 @@ class TestLogger:
 
     def _setup_logger(self) -> logging.Logger:
         """
-        הגדרת הלוגר עם פורמט מותאם וכתיבה לקובץ
+        Configure a logger with a timestamped file handler under
+        results/logs/, so test runs leave a persistent, readable log.
         """
-        # יצירת תיקיית הלוגים
-        log_dir = "results/logs"
-        os.makedirs(log_dir, exist_ok=True)
+        log_dir = Path("results/logs")
+        log_dir.mkdir(parents=True, exist_ok=True)
 
-        # הגדרת שם הקובץ עם תאריך ומזהה הבדיקה
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        log_file = f"{log_dir}/{timestamp}_{self._test_name}.log"
+        log_file = log_dir / f"{timestamp}_{self._test_name}.log"
 
-        # הגדרת הלוגר
         logger = logging.getLogger(f"test_{self._test_name}")
+        logger.setLevel(logging.DEBUG)
 
+        if not logger.handlers:
+            handler = logging.FileHandler(log_file, encoding="utf-8")
+            handler.setFormatter(
+                logging.Formatter("%(asctime)s [%(levelname)s] %(name)s: %(message)s")
+            )
+            logger.addHandler(handler)
 
         return logger
 
