@@ -53,6 +53,60 @@ To start the ammeter emulators and request current measurements, run the `main.p
 python main.py
 ```
 
+## Testing framework CLI
+
+With the emulators running (`python main.py`, or any process that starts
+them and stays up), the QA framework's CLI runs sampling tests against
+them and manages the results:
+
+```sh
+# Run a test against one ammeter, or all of them
+python -m src.cli run greenlee
+python -m src.cli run all
+
+# List saved runs
+python -m src.cli list
+python -m src.cli list --device circutor --limit 5
+
+# Show one saved run's full detail
+python -m src.cli show <run_id>
+
+# Compare two saved runs (mean/median/stdev/min/max/CV/failure-rate deltas)
+python -m src.cli compare <run_id_a> <run_id_b>
+```
+
+### Fault injection
+
+`run` accepts `--fault-injection`, which wraps each device's driver in a
+`FaultInjectingDriver` (`src/faults/injector.py`) that injects timeouts,
+disconnects, corrupted responses, and negative-value readings at a rate
+controlled by config.yaml's `fault_injection` section (disabled by
+default; seeded for reproducibility):
+
+```sh
+python -m src.cli run all --fault-injection
+```
+
+The printed summary line adds `injected_faults=N`. This proves the
+sampler/analyzer/store pipeline survives bad data instead of crashing —
+see `docs/DESIGN.md` for why one of the four fault types is deliberately
+invisible to the failure count.
+
+### HTML reports
+
+`src/reporting/html_report.py` renders a saved run document into a
+self-contained HTML file (stats table plus hand-rolled SVG histogram and
+time-series charts, no third-party dependency):
+
+```python
+from pathlib import Path
+from src.testing.store import load_run
+from src.reporting.html_report import generate_html_report
+
+run = load_run("<run_id>", {"results_dir": "results", "runs_subdir": "runs"})
+path = generate_html_report(run, Path("results/reports"))
+```
+
 ## Installed Libraries
 
 Dependencies live in `requirements.txt`; install with

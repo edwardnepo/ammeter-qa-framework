@@ -33,6 +33,39 @@
       "failure_rate_percent": 0.0,
       "mean": 0.2105267431283979,
       "coefficient_of_variation_percent": 99.94808611020233
+    },
+    {
+      "run_id": "20260810-133247-circutor-4a900c",
+      "device": "circutor",
+      "start_time": 1786357955.442165,
+      "end_time": 1786357967.973658,
+      "sample_count": 20,
+      "success_count": 14,
+      "failure_rate_percent": 30.0,
+      "mean": 0.01724275910530516,
+      "coefficient_of_variation_percent": 208.6586350221856
+    },
+    {
+      "run_id": "20260810-133300-entes-6862f1",
+      "device": "entes",
+      "start_time": 1786357968.001138,
+      "end_time": 1786357980.530551,
+      "sample_count": 20,
+      "success_count": 14,
+      "failure_rate_percent": 30.0,
+      "mean": 43.561650737353006,
+      "coefficient_of_variation_percent": 133.8708031647486
+    },
+    {
+      "run_id": "20260810-133313-greenlee-e8ebb1",
+      "device": "greenlee",
+      "start_time": 1786357980.537075,
+      "end_time": 1786357993.058644,
+      "sample_count": 20,
+      "success_count": 14,
+      "failure_rate_percent": 30.0,
+      "mean": 0.739362936245846,
+      "coefficient_of_variation_percent": 189.66468561311882
     }
   ]
 }

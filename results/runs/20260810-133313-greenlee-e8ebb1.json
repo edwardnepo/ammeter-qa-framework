@@ -1,0 +1,272 @@
+{
+  "run_id": "20260810-133313-greenlee-e8ebb1",
+  "metadata": {
+    "device": "greenlee",
+    "config_used": {
+      "ammeter": {
+        "driver": "src.drivers.greenlee.GreenleeDriver",
+        "host": "localhost",
+        "port": 5000,
+        "command": "MEASURE_GREENLEE -get_measurement",
+        "timeout_seconds": 2.0,
+        "retries": 3,
+        "retry_backoff_seconds": 0.5
+      },
+      "sampling": {
+        "measurements_count": 20,
+        "total_duration_seconds": null,
+        "sampling_frequency_hz": 2.0
+      },
+      "analysis": {
+        "statistical_metrics": [
+          "mean",
+          "median",
+          "stdev",
+          "min",
+          "max",
+          "coefficient_of_variation",
+          "failure_rate"
+        ],
+        "outlier_detection": {
+          "method": "iqr",
+          "iqr_multiplier": 1.5,
+          "min_samples_for_detection": 4
+        },
+        "visualization": {
+          "enabled": true,
+          "plot_types": []
+        }
+      }
+    },
+    "os": "macOS-26.5.2-arm64-arm-64bit",
+    "python_version": "3.9.6",
+    "start_time": 1786357980.537075,
+    "end_time": 1786357993.058644,
+    "duration_seconds": 12.521569013595581,
+    "sampling_plan": {
+      "count": 20,
+      "rate_hz": 2.0,
+      "expected_duration_seconds": 10.0
+    },
+    "jitter": {
+      "per_sample_seconds": [
+        7.124999999774673e-06,
+        0.010048582999999667,
+        0.01006158299999882,
+        2.020308874999998,
+        1.5226837499999988,
+        1.0240026249999978,
+        3.031898082999998,
+        2.5336367909999993,
+        2.034567040999999,
+        1.5351602080000006,
+        1.0351959999999991,
+        0.5356737910000007,
+        0.036128124999997624,
+        0.010043958000000686,
+        0.010041125000000761,
+        0.007913750000000164,
+        2.015693583000001,
+        1.5175960409999973,
+        3.5192064999999957,
+        3.0209555829999957
+      ],
+      "mean_seconds": 1.271541155999999,
+      "max_seconds": 3.5192064999999957,
+      "stdev_seconds": 1.1800493416221869
+    }
+  },
+  "raw_results": [
+    {
+      "value": 0.3575988394287407,
+      "unit": "A",
+      "timestamp": 1786357980.5380428,
+      "device": "greenlee",
+      "raw_response": "0.3575988394287407",
+      "error": null
+    },
+    {
+      "value": 0.11366105304786035,
+      "unit": "A",
+      "timestamp": 1786357981.049402,
+      "device": "greenlee",
+      "raw_response": "0.11366105304786035",
+      "error": null
+    },
+    {
+      "value": null,
+      "unit": "A",
+      "timestamp": 1786357984.057299,
+      "device": "greenlee",
+      "raw_response": null,
+      "error": "injected fault: injected timeout after 2.5s"
+    },
+    {
+      "value": 0.12165925419299965,
+      "unit": "A",
+      "timestamp": 1786357984.059707,
+      "device": "greenlee",
+      "raw_response": "0.12165925419299965",
+      "error": null
+    },
+    {
+      "value": null,
+      "unit": "A",
+      "timestamp": 1786357984.061006,
+      "device": "greenlee",
+      "raw_response": "6146563718174413.2#$corrupt",
+      "error": "injected fault: corrupted response '6146563718174413.2#$corrupt'"
+    },
+    {
+      "value": null,
+      "unit": "A",
+      "timestamp": 1786357986.5688782,
+      "device": "greenlee",
+      "raw_response": null,
+      "error": "injected fault: injected timeout after 2.5s"
+    },
+    {
+      "value": 3.4267151811483116,
+      "unit": "A",
+      "timestamp": 1786357986.570647,
+      "device": "greenlee",
+      "raw_response": "3.4267151811483116",
+      "error": null
+    },
+    {
+      "value": -0.11633986707262957,
+      "unit": "A",
+      "timestamp": 1786357986.571568,
+      "device": "greenlee",
+      "raw_response": "0.11633986707262957",
+      "error": null
+    },
+    {
+      "value": 0.11079746333619121,
+      "unit": "A",
+      "timestamp": 1786357986.572178,
+      "device": "greenlee",
+      "raw_response": "0.11079746333619121",
+      "error": null
+    },
+    {
+      "value": null,
+      "unit": "A",
+      "timestamp": 1786357986.572219,
+      "device": "greenlee",
+      "raw_response": null,
+      "error": "injected fault: injected connection reset by peer"
+    },
+    {
+      "value": 4.269318494827285,
+      "unit": "A",
+      "timestamp": 1786357986.572695,
+      "device": "greenlee",
+      "raw_response": "4.269318494827285",
+      "error": null
+    },
+    {
+      "value": 0.11798486767890691,
+      "unit": "A",
+      "timestamp": 1786357986.5731509,
+      "device": "greenlee",
+      "raw_response": "0.11798486767890691",
+      "error": null
+    },
+    {
+      "value": 0.07856393020099457,
+      "unit": "A",
+      "timestamp": 1786357986.5736,
+      "device": "greenlee",
+      "raw_response": "0.07856393020099457",
+      "error": null
+    },
+    {
+      "value": 0.1345079884656797,
+      "unit": "A",
+      "timestamp": 1786357987.049218,
+      "device": "greenlee",
+      "raw_response": "0.1345079884656797",
+      "error": null
+    },
+    {
+      "value": -0.369177504582172,
+      "unit": "A",
+      "timestamp": 1786357987.548791,
+      "device": "greenlee",
+      "raw_response": "0.369177504582172",
+      "error": null
+    },
+    {
+      "value": null,
+      "unit": "A",
+      "timestamp": 1786357990.552643,
+      "device": "greenlee",
+      "raw_response": null,
+      "error": "injected fault: injected timeout after 2.5s"
+    },
+    {
+      "value": 1.6698128049741954,
+      "unit": "A",
+      "timestamp": 1786357990.554571,
+      "device": "greenlee",
+      "raw_response": "1.6698128049741954",
+      "error": null
+    },
+    {
+      "value": null,
+      "unit": "A",
+      "timestamp": 1786357993.056133,
+      "device": "greenlee",
+      "raw_response": null,
+      "error": "injected fault: injected timeout after 2.5s"
+    },
+    {
+      "value": 0.2840101675551505,
+      "unit": "A",
+      "timestamp": 1786357993.057919,
+      "device": "greenlee",
+      "raw_response": "0.2840101675551505",
+      "error": null
+    },
+    {
+      "value": 0.15196843424033024,
+      "unit": "A",
+      "timestamp": 1786357993.058636,
+      "device": "greenlee",
+      "raw_response": "0.15196843424033024",
+      "error": null
+    }
+  ],
+  "analyzed_results": {
+    "sample_count": 20,
+    "success_count": 14,
+    "failure_count": 6,
+    "failure_rate_percent": 30.0,
+    "mean": 0.739362936245846,
+    "median": 0.12808362132933968,
+    "stdev": 1.402310388570608,
+    "min": -0.369177504582172,
+    "max": 4.269318494827285,
+    "coefficient_of_variation_percent": 189.66468561311882,
+    "outliers": {
+      "method": "iqr",
+      "lower_bound": -0.23001910528024355,
+      "upper_bound": 0.6807341375046952,
+      "count": 4,
+      "indices": [
+        6,
+        10,
+        14,
+        16
+      ],
+      "values": [
+        3.4267151811483116,
+        4.269318494827285,
+        -0.369177504582172,
+        1.6698128049741954
+      ]
+    },
+    "notes": []
+  }
+}

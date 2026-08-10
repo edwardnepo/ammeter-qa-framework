@@ -1,0 +1,266 @@
+{
+  "run_id": "20260810-133300-entes-6862f1",
+  "metadata": {
+    "device": "entes",
+    "config_used": {
+      "ammeter": {
+        "driver": "src.drivers.entes.EntesDriver",
+        "host": "localhost",
+        "port": 5001,
+        "command": "MEASURE_ENTES -get_data",
+        "timeout_seconds": 2.0,
+        "retries": 3,
+        "retry_backoff_seconds": 0.5
+      },
+      "sampling": {
+        "measurements_count": 20,
+        "total_duration_seconds": null,
+        "sampling_frequency_hz": 2.0
+      },
+      "analysis": {
+        "statistical_metrics": [
+          "mean",
+          "median",
+          "stdev",
+          "min",
+          "max",
+          "coefficient_of_variation",
+          "failure_rate"
+        ],
+        "outlier_detection": {
+          "method": "iqr",
+          "iqr_multiplier": 1.5,
+          "min_samples_for_detection": 4
+        },
+        "visualization": {
+          "enabled": true,
+          "plot_types": []
+        }
+      }
+    },
+    "os": "macOS-26.5.2-arm64-arm-64bit",
+    "python_version": "3.9.6",
+    "start_time": 1786357968.001138,
+    "end_time": 1786357980.530551,
+    "duration_seconds": 12.529412984848022,
+    "sampling_plan": {
+      "count": 20,
+      "rate_hz": 2.0,
+      "expected_duration_seconds": 10.0
+    },
+    "jitter": {
+      "per_sample_seconds": [
+        4.083000000321135e-06,
+        0.010051499999999436,
+        0.007132083000000122,
+        2.017431333000001,
+        1.5192221249999989,
+        1.0200906670000016,
+        3.021000333,
+        2.5227196250000006,
+        2.0236533749999985,
+        1.524477375,
+        1.0245152080000004,
+        0.5253073330000007,
+        0.026004125000000045,
+        0.010049167000001802,
+        0.010044167000000215,
+        0.005363500000001409,
+        2.015544042000002,
+        1.5173175830000005,
+        3.5268862500000004,
+        3.028694167000001
+      ],
+      "mean_seconds": 1.2677754020500005,
+      "max_seconds": 3.5268862500000004,
+      "stdev_seconds": 1.1806899310408578
+    }
+  },
+  "raw_results": [
+    {
+      "value": 79.80695600280099,
+      "unit": "A",
+      "timestamp": 1786357968.002313,
+      "device": "entes",
+      "raw_response": "79.80695600280099",
+      "error": null
+    },
+    {
+      "value": 28.373958776208397,
+      "unit": "A",
+      "timestamp": 1786357968.512979,
+      "device": "entes",
+      "raw_response": "28.373958776208397",
+      "error": null
+    },
+    {
+      "value": null,
+      "unit": "A",
+      "timestamp": 1786357971.518486,
+      "device": "entes",
+      "raw_response": null,
+      "error": "injected fault: injected timeout after 2.5s"
+    },
+    {
+      "value": 60.098457668504295,
+      "unit": "A",
+      "timestamp": 1786357971.5203142,
+      "device": "entes",
+      "raw_response": "60.098457668504295",
+      "error": null
+    },
+    {
+      "value": null,
+      "unit": "A",
+      "timestamp": 1786357971.521158,
+      "device": "entes",
+      "raw_response": "82737730925636.57#$corrupt",
+      "error": "injected fault: corrupted response '82737730925636.57#$corrupt'"
+    },
+    {
+      "value": null,
+      "unit": "A",
+      "timestamp": 1786357974.022042,
+      "device": "entes",
+      "raw_response": null,
+      "error": "injected fault: injected timeout after 2.5s"
+    },
+    {
+      "value": 128.06035424855557,
+      "unit": "A",
+      "timestamp": 1786357974.0237901,
+      "device": "entes",
+      "raw_response": "128.06035424855557",
+      "error": null
+    },
+    {
+      "value": -101.52131499319022,
+      "unit": "A",
+      "timestamp": 1786357974.0247118,
+      "device": "entes",
+      "raw_response": "101.52131499319022",
+      "error": null
+    },
+    {
+      "value": 37.54509427571854,
+      "unit": "A",
+      "timestamp": 1786357974.025553,
+      "device": "entes",
+      "raw_response": "37.54509427571854",
+      "error": null
+    },
+    {
+      "value": null,
+      "unit": "A",
+      "timestamp": 1786357974.025601,
+      "device": "entes",
+      "raw_response": null,
+      "error": "injected fault: injected connection reset by peer"
+    },
+    {
+      "value": 70.83566179389219,
+      "unit": "A",
+      "timestamp": 1786357974.026387,
+      "device": "entes",
+      "raw_response": "70.83566179389219",
+      "error": null
+    },
+    {
+      "value": 112.83802110324586,
+      "unit": "A",
+      "timestamp": 1786357974.027083,
+      "device": "entes",
+      "raw_response": "112.83802110324586",
+      "error": null
+    },
+    {
+      "value": 92.38508892805407,
+      "unit": "A",
+      "timestamp": 1786357974.028023,
+      "device": "entes",
+      "raw_response": "92.38508892805407",
+      "error": null
+    },
+    {
+      "value": 19.462095158265505,
+      "unit": "A",
+      "timestamp": 1786357974.5128372,
+      "device": "entes",
+      "raw_response": "19.462095158265505",
+      "error": null
+    },
+    {
+      "value": -23.009448130733233,
+      "unit": "A",
+      "timestamp": 1786357975.013411,
+      "device": "entes",
+      "raw_response": "23.009448130733233",
+      "error": null
+    },
+    {
+      "value": null,
+      "unit": "A",
+      "timestamp": 1786357978.016556,
+      "device": "entes",
+      "raw_response": null,
+      "error": "injected fault: injected timeout after 2.5s"
+    },
+    {
+      "value": 14.027244536637074,
+      "unit": "A",
+      "timestamp": 1786357978.018354,
+      "device": "entes",
+      "raw_response": "14.027244536637074",
+      "error": null
+    },
+    {
+      "value": null,
+      "unit": "A",
+      "timestamp": 1786357980.527883,
+      "device": "entes",
+      "raw_response": null,
+      "error": "injected fault: injected timeout after 2.5s"
+    },
+    {
+      "value": 58.6755112983744,
+      "unit": "A",
+      "timestamp": 1786357980.5297122,
+      "device": "entes",
+      "raw_response": "58.6755112983744",
+      "error": null
+    },
+    {
+      "value": 32.28542965660867,
+      "unit": "A",
+      "timestamp": 1786357980.530541,
+      "device": "entes",
+      "raw_response": "32.28542965660867",
+      "error": null
+    }
+  ],
+  "analyzed_results": {
+    "sample_count": 20,
+    "success_count": 14,
+    "failure_count": 6,
+    "failure_rate_percent": 30.0,
+    "mean": 43.561650737353006,
+    "median": 48.11030278704647,
+    "stdev": 58.316331713917094,
+    "min": -101.52131499319022,
+    "max": 128.06035424855557,
+    "coefficient_of_variation_percent": 133.8708031647486,
+    "outliers": {
+      "method": "iqr",
+      "lower_bound": -62.121046018982625,
+      "upper_bound": 161.37523953230766,
+      "count": 1,
+      "indices": [
+        7
+      ],
+      "values": [
+        -101.52131499319022
+      ]
+    },
+    "notes": []
+  }
+}

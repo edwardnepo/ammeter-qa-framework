@@ -33,3 +33,60 @@ this framework is verified with a manual run against the real, running
 emulators in addition to its pytest suite: unit tests with mocked I/O
 prove the code does what it was told to do, but only a live integration
 run proves what it does actually works against the real protocol.
+
+## Fault injection: composition over inheritance, and a deliberately silent fault
+
+`src/faults/injector.py`'s `FaultInjectingDriver` wraps an `AmmeterDriver`
+by **composition**, not inheritance, and is not registered as a driver
+type in `config.yaml` — `src/drivers/registry.py`'s `build_driver()`
+requires the resolved class to be an `AmmeterDriver` subclass, so a fault
+injector that *is* one would need to fake being a real vendor driver.
+Composition keeps it what it actually is: a runtime wrapper applied around
+a driver the registry already built, via `AmmeterTestFramework.run_test()`'s
+new optional `driver_wrapper` hook. That hook defaults to `None` so every
+existing caller and test is unaffected — the only new coupling is the CLI's
+`--fault-injection` flag choosing to pass one.
+
+Of the four injectable faults, three (`timeout`, `disconnect`,
+`corrupted_response`) are **transport-level**: they synthesize a
+`MeasurementSample` with `error` set, exactly like a real
+`AmmeterDriver.measure()` failure, so they're fully visible in
+`failure_count`/`failure_rate_percent`. The fourth, `negative_value`, is
+different on purpose: it takes a genuine reading and flips its sign,
+returning a **structurally successful sample carrying a physically
+impossible current**. `error` is deliberately left `None`. This is a
+domain-level fault, not a transport-level one — the analyzer has no notion
+of "a current can't be negative," so this fault is invisible to every
+failure-counting metric and only shows up by pulling `mean`/`min` into
+implausible territory.
+
+A live run against all three real emulators with `fault_rate=0.25`
+confirmed exactly this split: each device reported `injected_faults=8` but
+only 6 counted as `failures` — the other 2 were negative-value corruptions
+that passed as "successes." Comparing that run against a clean baseline
+with the new `compare` command made the effect concrete: `min` went from
+`0.0044` to `-0.0552` while `failure_rate_percent` only moved from
+`0%` to `30%`, understating how much of the run's data was actually
+untrustworthy. That gap is the point: it demonstrates why "zero reported
+failures" isn't the same as "clean data," and is a concrete argument for a
+future extension (domain sanity bounds in the analyzer, e.g. rejecting or
+flagging negative currents) that this submission deliberately doesn't
+implement, to avoid scope creep beyond what was asked.
+
+## HTML report: hand-rolled SVG instead of a charting library
+
+`src/reporting/html_report.py` builds its histogram and time-series charts
+as inline `<svg>` via plain string templating — no matplotlib, no other
+third-party dependency. `reporting/` is the one place the project's rules
+allow an optional dependency to live (isolated, degrading gracefully when
+absent), but this report needed nothing beyond stdlib to satisfy the
+actual requirement: two simple charts and a stats table from data already
+shaped as plain floats. Reaching for matplotlib would have added a real
+dependency (with its own README/requirements.txt disclosure burden) for
+capability this module doesn't use — no interactivity, no complex plot
+types, just bars and a polyline. The tradeoff is more code in this file
+(manual axis scaling, bucketing, coordinate math) in exchange for a report
+that's a single self-contained HTML file with zero runtime dependencies to
+render, and that degrades to a "no successful samples" placeholder instead
+of crashing when a fault-injection run legitimately produces zero
+successes.
