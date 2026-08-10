@@ -131,6 +131,17 @@ same name won't stack duplicate handlers.
 what it already claimed to do; a full logging redesign is deferred to
 whatever the new `src/` architecture builds.
 
+**Update:** Once the `src/` architecture was built out, every layer
+(`drivers/base.py`, `drivers/registry.py`, `faults/injector.py`,
+`testing/sampler.py`, `testing/store.py`, `utils/config.py`) ended up
+using the standard `logging.getLogger(__name__)` module-level pattern
+instead — the "whatever the new architecture builds" referenced above.
+`TestLogger` was never called from anywhere in `src/`, `tests/`,
+`main.py`, or `Ammeters/`, so `src/utils/logger.py` was deleted as dead
+code rather than kept working-but-unused. The `FileHandler` fix
+documented above was real and correct at the time; it's recorded here
+for history, not because the class still exists.
+
 ## 7. `load_config` had no error handling
 
 **Symptom:** A missing config file or a malformed `config.yaml` would
