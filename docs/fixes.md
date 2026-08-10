@@ -151,3 +151,21 @@ English with Args/Returns/Raises.
 specific exception types — re-raising them after logging satisfies the
 "typed error result" requirement without introducing a new custom
 exception class the task doesn't need yet.
+
+## 8. `src/` had no `__init__.py` anywhere
+
+**Symptom:** `src/testing/test_framework.py:3` does
+`from ..utils.config import load_config`, a relative import that
+requires `src`, `src.testing`, and `src.utils` to be real packages.
+Without them, importing or running the module directly raised
+`ImportError: attempted relative import with no known parent package`.
+
+**Root cause:** No `__init__.py` existed under `src/`, `src/testing/`,
+or `src/utils/`.
+
+**Fix:** Added empty `src/__init__.py`, `src/testing/__init__.py`, and
+`src/utils/__init__.py`.
+
+**Why:** This is required for the relative imports already written in
+the supplied code (and for the new architecture planned on top of
+`src/`) to work at all — a zero-risk, purely structural fix.
