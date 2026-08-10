@@ -122,6 +122,39 @@ def test_run_test_propagates_connection_error(monkeypatch, framework):
         framework.run_test("greenlee")
 
 
+def test_run_test_applies_driver_wrapper_before_preflight_and_sampling(monkeypatch, framework):
+    real_driver = mock_driver([make_sample(10.0), make_sample(11.0), make_sample(12.0)])
+    monkeypatch.setattr(
+        "src.testing.test_framework.build_driver", lambda name, cfg: real_driver
+    )
+
+    wrapped_driver = mock_driver([make_sample(20.0), make_sample(21.0), make_sample(22.0)])
+    seen = []
+
+    def wrapper(driver):
+        seen.append(driver)
+        return wrapped_driver
+
+    result = framework.run_test("greenlee", driver_wrapper=wrapper)
+
+    assert seen == [real_driver]  # the wrapper received the real, unwrapped driver
+    assert real_driver.connect.call_count == 0  # only the wrapped driver is used from here on
+    assert wrapped_driver.connect.called
+    assert wrapped_driver.measure.call_count == 3
+    assert result["mean"] == 21.0
+
+
+def test_run_test_without_wrapper_behaves_exactly_as_before(monkeypatch, framework):
+    driver = mock_driver([make_sample(10.0), make_sample(11.0), make_sample(12.0)])
+    monkeypatch.setattr(
+        "src.testing.test_framework.build_driver", lambda name, cfg: driver
+    )
+
+    result = framework.run_test("greenlee", driver_wrapper=None)
+
+    assert result["mean"] == 11.0
+
+
 def test_run_test_persists_a_loadable_run(monkeypatch, framework, full_config):
     driver = mock_driver([make_sample(10.0), make_sample(11.0), make_sample(12.0)])
     monkeypatch.setattr(

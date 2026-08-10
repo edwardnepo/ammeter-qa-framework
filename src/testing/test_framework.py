@@ -1,7 +1,8 @@
 """Orchestrates one full ammeter test: driver -> sampler -> analyzer -> store."""
 
-from typing import Any, Dict
+from typing import Any, Callable, Dict, Optional
 
+from src.drivers.base import AmmeterDriver
 from src.drivers.registry import build_driver
 from src.testing.analyzer import analyze_samples
 from src.testing.sampler import resolve_sampling_plan, run_sampling
@@ -23,7 +24,11 @@ class AmmeterTestFramework:
         """
         self.config = load_config(config_path)
 
-    def run_test(self, ammeter_type: str) -> Dict[str, Any]:
+    def run_test(
+        self,
+        ammeter_type: str,
+        driver_wrapper: Optional[Callable[[AmmeterDriver], Any]] = None,
+    ) -> Dict[str, Any]:
         """Run one full sampling test against a single configured ammeter.
 
         Builds the driver via the registry, resolves the sampling plan,
@@ -40,6 +45,11 @@ class AmmeterTestFramework:
 
         Args:
             ammeter_type: Key into config["ammeters"], e.g. "greenlee".
+            driver_wrapper: Optional hook applied to the freshly built
+                driver before the preflight and sampling (e.g. wrapping it
+                in a FaultInjectingDriver). Receives the real driver,
+                returns the driver to actually use. Defaults to None (no
+                wrapping), which preserves existing behavior exactly.
 
         Returns:
             A summary dict: run_id, device, success (failure_count == 0),
@@ -69,6 +79,8 @@ class AmmeterTestFramework:
 
         plan = resolve_sampling_plan(sampling_config)
         driver = build_driver(ammeter_type, ammeter_config)
+        if driver_wrapper is not None:
+            driver = driver_wrapper(driver)
 
         driver.connect()
         driver.close()
