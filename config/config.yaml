@@ -5,15 +5,30 @@ testing:
     sampling_frequency_hz: NULL
 
 ammeters:
-#  greenlee:
-#    port: 5000
-#    command: "MEASURE_GREENLEE -get_measurement"
-#  entes:
-#    port: 5001
-#    command: "MEASURE_ENTES -get_data"
-#  circutor:
-#    port: 5002
-#    command: "MEASURE_CIRCUTOR -get_measurement"
+  greenlee:
+    driver: "src.drivers.greenlee.GreenleeDriver"
+    host: "localhost"
+    port: 5000
+    command: "MEASURE_GREENLEE -get_measurement"
+    timeout_seconds: 2.0
+    retries: 3
+    retry_backoff_seconds: 0.5
+  entes:
+    driver: "src.drivers.entes.EntesDriver"
+    host: "localhost"
+    port: 5001
+    command: "MEASURE_ENTES -get_data"
+    timeout_seconds: 2.0
+    retries: 3
+    retry_backoff_seconds: 0.5
+  circutor:
+    driver: "src.drivers.circutor.CircutorDriver"
+    host: "localhost"
+    port: 5002
+    command: "MEASURE_CIRCUTOR -get_measurement -current"
+    timeout_seconds: 2.0
+    retries: 3
+    retry_backoff_seconds: 0.5
 
 analysis:
   statistical_metrics:
