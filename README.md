@@ -110,6 +110,12 @@ path = generate_html_report(run, Path("results/reports"))
 ## Installed Libraries
 
 Dependencies live in `requirements.txt`; install with
-`pip install -r requirements.txt`.
+`pip install -r requirements.txt`. This list matches `requirements.txt`
+exactly and is kept minimal on purpose (see `CLAUDE.md`'s "core is
+stdlib" rule) — everything else the framework uses (`socket`,
+`statistics`, `json`, `csv`, `pathlib`, `argparse`, `dataclasses`,
+`threading`, `logging`, `time`) is standard library.
 
+- `pyyaml` — parses `config/config.yaml` (`src/utils/config.py`,
+  `src/cli.py`).
 - `pytest` — test framework used for the project's automated test suite.
