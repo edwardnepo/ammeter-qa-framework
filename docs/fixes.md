@@ -169,3 +169,21 @@ or `src/utils/`.
 **Why:** This is required for the relative imports already written in
 the supplied code (and for the new architecture planned on top of
 `src/`) to work at all — a zero-risk, purely structural fix.
+
+## 9. `pytest` was allowed but never declared
+
+**Symptom:** `pytest` is named as an allowed dependency for the test
+suite, but it wasn't listed in `requirements.txt` or installed, and the
+README had no section listing installed libraries at all.
+
+**Root cause:** `requirements.txt` predates the decision to write
+pytest tests; the dependency was never added, and the README never
+gained a section for it.
+
+**Fix:** Added `pytest>=7.4.0` to `requirements.txt` and a new
+"Installed Libraries" section to `README.md` noting its purpose.
+
+**Why:** Declared and documented now, ahead of the test-writing layer,
+rather than deferred — every installed library must be listed in the
+README per the project spec, and doing it at the point of addition
+avoids a later untracked gap.

@@ -52,3 +52,10 @@ To start the ammeter emulators and request current measurements, run the `main.p
 ```sh
 python main.py
 ```
+
+## Installed Libraries
+
+Dependencies live in `requirements.txt`; install with
+`pip install -r requirements.txt`.
+
+- `pytest` — test framework used for the project's automated test suite.
