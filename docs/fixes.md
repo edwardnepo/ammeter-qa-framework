@@ -21,3 +21,26 @@ in `main.py` to ports 5000/5001/5002.
 `main.py` is the bug, not the documentation. Fixing it here (rather than
 changing the docs to match) keeps the ports the framework will read from
 `config.yaml` consistent with what's already documented.
+
+## 2. `main.py` client calls were commented out and wrong
+
+**Symptom:** The spec requires `main.py` to "make the main.py script work
+and return data from the ammeters," but the client calls were commented
+out. Even uncommented as-is they would never have worked.
+
+**Root cause:** `main.py:33-35` used bare commands
+(`b'MEASURE_GREENLEE'`, `b'MEASURE_ENTES'`, `b'MEASURE_CIRCUTOR'`).
+`Ammeters/base_ammeter.py:27` replies only on byte-for-byte equality with
+`get_current_command`, which requires the full suffix on every emulator
+(`-get_measurement`, `-get_data`, `-get_measurement -current`). A
+mismatch is silently dropped (no error reply), so the bare commands would
+have produced "No data received." with no indication why.
+
+**Fix:** Uncommented the three `request_current_from_ammeter` calls in
+`main.py`, using each emulator's exact command bytes (as defined in
+`Ammeters/{Greenlee,Entes,Circutor}_Ammeter.py`), and updated the port
+numbers to match the fix above.
+
+**Why:** `main.py` is the entry point, not one of the `Ammeters/*.py`
+driver classes the "don't touch emulator files" rule protects — fixing
+its client calls is explicitly in scope per the spec.
