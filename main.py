@@ -8,15 +8,15 @@ from Ammeters.client import request_current_from_ammeter
 
 
 def run_greenlee_emulator():
-    greenlee = GreenleeAmmeter(5001)
+    greenlee = GreenleeAmmeter(5000)
     greenlee.start_server()
 
 def run_entes_emulator():
-    entes = EntesAmmeter(5002)
+    entes = EntesAmmeter(5001)
     entes.start_server()
 
 def run_circutor_emulator():
-    circutor = CircutorAmmeter(5003)
+    circutor = CircutorAmmeter(5002)
     circutor.start_server()
 
 if __name__ == "__main__":
