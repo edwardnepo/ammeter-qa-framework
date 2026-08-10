@@ -4,24 +4,45 @@ This project provides emulators for different types of ammeters: Greenlee, ENTES
 
 ## Project Structure
 
+- `main.py`: Starts the three ammeter emulators and requests one
+  measurement from each (the original "before you start" script).
 - `Ammeters/`
-  - `main.py`: Main script to start the ammeter emulators and request current measurements.
-  - `Circutor_Ammeter.py`: Emulator for the CIRCUTOR ammeter.
-  - `Entes_Ammeter.py`: Emulator for the ENTES ammeter.
-  - `Greenlee_Ammeter.py`: Emulator for the Greenlee ammeter.
-  - `base_ammeter.py`: Base class for all ammeter emulators.
-  - `client.py`: Client to request current measurements from the ammeter emulators.
+  - `Circutor_Ammeter.py`, `Entes_Ammeter.py`, `Greenlee_Ammeter.py`:
+    the three ammeter emulators (untouched hardware simulators).
+  - `base_ammeter.py`: shared TCP server base class for the emulators.
+  - `client.py`: minimal client used by the emulators' own tests.
 - `config/`
-  - `config.yaml`: Configuration file for the ammeter emulators.
+  - `config.yaml`: single source of truth for ports, commands, sampling,
+    analysis, result storage, and fault injection — see "Adding a fourth
+    ammeter" below for how drivers plug into it.
 - `examples/`
-  - `run_test.py`: super lyze example for run test **don't use it**.
-- `src/`
-  - `testing/`
-    - `AmmeterTester.py`: Class to test the ammeter emulators.
-  - `utils/`
-    - `config.py`: Configuration settings.
-    - `logger.py`: Logging setup.
-    - `Utils.py`: Utility functions, including `generate_random_float`.
+  - `run_tests.py`: legacy example script — **do not use it** (per the
+    project spec); the QA framework's own CLI (below) is the supported
+    way to run tests.
+- `src/`: the QA testing framework proper.
+  - `drivers/`: `base.py` (the `AmmeterDriver` ABC and TCP protocol),
+    one thin subclass per vendor (`greenlee.py`, `entes.py`,
+    `circutor.py`), and `registry.py` (resolves config's `driver` key to
+    a class via `importlib`, with zero per-vendor branching).
+  - `testing/`: `sampler.py` (absolute-deadline sampling), `analyzer.py`
+    (mean/median/stdev/CV/IQR outliers), `store.py` (run persistence,
+    JSON + index), `test_framework.py` (`AmmeterTestFramework`, the
+    orchestration entry point `src/cli.py` calls).
+  - `faults/injector.py`: `FaultInjectingDriver`, a composition-based
+    wrapper that injects timeouts/disconnects/corrupted or
+    negative-value readings for the `--fault-injection` flag.
+  - `reporting/html_report.py`: renders a saved run into a
+    self-contained HTML report (see "HTML reports" below).
+  - `utils/config.py`: loads and validates `config.yaml`.
+  - `utils/Utils.py`: shared helpers used by the emulator layer
+    (`generate_random_float`).
+  - `cli.py`: the `run` / `list` / `show` / `compare` commands
+    documented below.
+- `tests/`: pytest suite, mirroring the `src/` layout.
+- `results/`: saved run JSON documents, `index.json`, and generated HTML
+  reports (see "Sample results" below).
+- `docs/`: `investigation.md` (original bug audit), `fixes.md` (every
+  fix applied and why), `DESIGN.md` (design decisions and tradeoffs).
 
 ## Usage
 
@@ -69,11 +90,15 @@ python -m src.cli list
 python -m src.cli list --device circutor --limit 5
 
 # Show one saved run's full detail
-python -m src.cli show <run_id>
+python -m src.cli show 20260810-125503-circutor-22a112
 
 # Compare two saved runs (mean/median/stdev/min/max/CV/failure-rate deltas)
-python -m src.cli compare <run_id_a> <run_id_b>
+python -m src.cli compare 20260810-125503-circutor-22a112 20260810-133247-circutor-4a900c
 ```
+
+(Those two run IDs are real, checked-in examples under `results/runs/` —
+a clean baseline vs. a `--fault-injection` run against the same CIRCUTOR
+device; see "Sample results" below.)
 
 ### Fault injection
 
@@ -106,6 +131,64 @@ from src.reporting.html_report import generate_html_report
 run = load_run("<run_id>", {"results_dir": "results", "runs_subdir": "runs"})
 path = generate_html_report(run, Path("results/reports"))
 ```
+
+## Adding a fourth ammeter
+
+Adding a new vendor takes exactly two steps — no existing code is edited:
+
+1. **Write one driver file** under `src/drivers/`, subclassing
+   `AmmeterDriver` (`src/drivers/base.py`) and setting `DEFAULT_COMMAND`
+   (and optionally `DEFAULT_UNIT`) as a fallback, following the pattern in
+   `src/drivers/greenlee.py`:
+
+   ```python
+   # src/drivers/newvendor.py
+   from src.drivers.base import AmmeterDriver
+
+   class NewVendorDriver(AmmeterDriver):
+       DEFAULT_COMMAND = b"MEASURE_NEWVENDOR -get_measurement"
+   ```
+
+2. **Add one entry** under `ammeters:` in `config/config.yaml`, pointing
+   `driver` at that class's dotted import path:
+
+   ```yaml
+   ammeters:
+     newvendor:
+       driver: "src.drivers.newvendor.NewVendorDriver"
+       host: "localhost"
+       port: 5003
+       command: "MEASURE_NEWVENDOR -get_measurement"
+       timeout_seconds: 2.0
+       retries: 3
+       retry_backoff_seconds: 0.5
+   ```
+
+`src/drivers/registry.py::build_driver` resolves `driver` via
+`importlib` at run time — nothing outside these two files knows the
+vendor's name. `python -m src.cli run newvendor` (or `run all`) picks it
+up immediately, with no changes to `cli.py`, `registry.py`, or any other
+driver.
+
+## Sample results
+
+`results/` has six checked-in real runs from two live sessions against
+the actual emulators (not synthetic/test fixtures):
+
+- `20260810-125503-circutor-22a112`, `20260810-125512-entes-0d2ed7`,
+  `20260810-125522-greenlee-60318c` — clean baseline, one per device,
+  0% failures.
+- `20260810-133247-circutor-4a900c`, `20260810-133300-entes-6862f1`,
+  `20260810-133313-greenlee-e8ebb1` — the same three devices with
+  `--fault-injection` enabled (`fault_rate=0.25`); see `docs/DESIGN.md`
+  for why `failure_rate_percent` (30%) understates how much of the data
+  is actually suspect once `negative_value` faults are counted.
+- `results/reports/20260810-133247-circutor-4a900c.html` — a generated
+  HTML report for the CIRCUTOR fault-injection run (see "HTML reports"
+  above for how to generate one for any other run).
+
+`python -m src.cli show <run_id>` or `compare <run_id_a> <run_id_b>` (see
+above) work against any of these out of the box.
 
 ## Installed Libraries
 
