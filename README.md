@@ -44,7 +44,7 @@ This project provides emulators for different types of ammeters: Greenlee, ENTES
 ## CIRCUTOR Ammeter
 
 - **Port**: 5002
-- **Command**: `MEASURE_CIRCUTOR -get_measurement`
+- **Command**: `MEASURE_CIRCUTOR -get_measurement -current`
 - **Measurement Logic**: Calculates current using voltage values (0.1V - 1.0V) over a number of samples and a random time step (0.001s - 0.01s).
 - **Measurement method** : Rogowski Coil Integration: I = ∫V dt
 

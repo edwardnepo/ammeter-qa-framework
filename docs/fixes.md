@@ -90,3 +90,20 @@ a genuine readiness signal — the OS backlog queues the connection even
 before the server's `accept()` loop runs — so this needed no change to
 `Ammeters/base_ammeter.py` beyond the `SO_REUSEADDR` fix above. It also
 adapts to actual startup time instead of a guessed constant.
+
+## 5. README documented the wrong CIRCUTOR command
+
+**Symptom:** A client built strictly from `README.md`'s CIRCUTOR command
+would be silently rejected by the emulator (no reply, no error).
+
+**Root cause:** `Ammeters/Circutor_Ammeter.py:9` defines
+`get_current_command` as
+`b'MEASURE_CIRCUTOR -get_measurement -current'`, but `README.md:47`
+documented it without the `-current` flag.
+
+**Fix:** Updated `README.md`'s CIRCUTOR command to
+`MEASURE_CIRCUTOR -get_measurement -current`.
+
+**Why:** The emulator represents the "hardware" and stays untouched;
+this is a documentation bug, not an emulator bug, so the README was
+fixed to match the code rather than the other way around.
