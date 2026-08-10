@@ -187,3 +187,42 @@ gained a section for it.
 rather than deferred — every installed library must be listed in the
 README per the project spec, and doing it at the point of addition
 avoids a later untracked gap.
+
+## 10. `test_framework.py` had a missing import and an unimplemented `run_test`
+
+**Symptom:** Importing `src.testing.test_framework` raised
+`NameError: name 'Dict' is not defined` at class-definition time — the
+`run_test` return-type annotation referenced `Dict` with no `typing`
+import and no `from __future__ import annotations`. Even past that,
+`run_test()` was a bare `pass`: it never touched `ammeter_type` or
+`self.config`, and calling it always returned `None` instead of running a
+real ammeter test.
+
+**Root cause:** `test_framework.py` never imported `Dict` from `typing`,
+and `run_test` had no wiring to a driver, a sampler, an analyzer, or a
+store — none of which existed in the codebase when the stub was written.
+
+**Fix:** Added `from typing import Any, Dict`. Implemented `run_test` to:
+look up the ammeter's config; build its driver via
+`src.drivers.registry.build_driver`; resolve a `SamplingPlan` from
+`config["testing"]["sampling"]` via `src.testing.sampler`; run
+absolute-deadline sampling (using the driver as a context manager for a
+fail-fast reachability preflight); analyze the resulting samples via
+`src.testing.analyzer.analyze_samples`; persist the full run via
+`src.testing.store.save_run`; and return a summary dict (run_id, device,
+success flag, sample/success/failure counts, headline stats, outlier
+count, timing, `result_path`). Setup/orchestration errors (`KeyError`,
+`DriverResolutionError`, `ValueError`, `ConnectionError`, `OSError`) are
+not swallowed — they propagate as typed errors, matching the rest of the
+codebase's error-handling convention. Also switched the file's one
+existing import from a relative (`from ..utils.config import
+load_config`) to an absolute one (`from src.utils.config import
+load_config`), for consistency with every other module this fix wires it
+to, which all use absolute `src.`-prefixed imports.
+
+**Why:** Both bugs were already recorded as open items in
+`docs/investigation.md`. The missing import was trivial, but the stub
+`run_test` is the actual integration point tying together every piece of
+the core testing layer (sampler, analyzer, store) — implementing it here,
+rather than leaving a thin pass-through, keeps `AmmeterTestFramework` the
+single entry point `src/cli.py` and future callers use.
