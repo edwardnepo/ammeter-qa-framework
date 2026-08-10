@@ -27,10 +27,16 @@ class AmmeterTestFramework:
         """Run one full sampling test against a single configured ammeter.
 
         Builds the driver via the registry, resolves the sampling plan,
-        runs absolute-deadline sampling (using the driver's `connect()` as
-        a fail-fast reachability preflight via a `with` block), analyzes
-        the resulting samples, persists the full run, and returns a
-        summary.
+        does a fail-fast reachability preflight (connect, then immediately
+        close, before sampling starts), runs absolute-deadline sampling,
+        analyzes the resulting samples, persists the full run, and returns
+        a summary.
+
+        The preflight connection is closed before sampling begins rather
+        than held open for the run's duration: the emulators accept and
+        service exactly one connection at a time in a single-threaded
+        loop, so an idle connection left open blocks the server's accept
+        loop indefinitely, starving every subsequent measurement attempt.
 
         Args:
             ammeter_type: Key into config["ammeters"], e.g. "greenlee".
@@ -64,8 +70,9 @@ class AmmeterTestFramework:
         plan = resolve_sampling_plan(sampling_config)
         driver = build_driver(ammeter_type, ammeter_config)
 
-        with driver:
-            sampling_result = run_sampling(driver, plan)
+        driver.connect()
+        driver.close()
+        sampling_result = run_sampling(driver, plan)
 
         analysis = analyze_samples(sampling_result.samples, outlier_config)
 

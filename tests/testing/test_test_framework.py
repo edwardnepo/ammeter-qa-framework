@@ -53,8 +53,6 @@ def framework(monkeypatch, full_config):
 
 def mock_driver(measure_results):
     driver = MagicMock(spec=AmmeterDriver)
-    driver.__enter__.return_value = driver
-    driver.__exit__.return_value = None
     driver.measure.side_effect = measure_results
     return driver
 
@@ -77,6 +75,25 @@ def test_run_test_returns_expected_summary_shape(monkeypatch, framework):
     assert Path(result["result_path"]).exists()
 
 
+def test_run_test_closes_preflight_connection_before_sampling(monkeypatch, framework):
+    # Regression guard: the emulators serve one connection at a time in a
+    # single-threaded loop, so holding the preflight connection open across
+    # the whole sampling run (e.g. via `with driver:`) starves every
+    # measure() call. connect() and close() must both happen before the
+    # first measure() call.
+    driver = mock_driver([make_sample(10.0), make_sample(11.0), make_sample(12.0)])
+    monkeypatch.setattr(
+        "src.testing.test_framework.build_driver", lambda name, cfg: driver
+    )
+
+    framework.run_test("greenlee")
+
+    call_names = [call[0] for call in driver.mock_calls]
+    assert "connect" in call_names and "close" in call_names and "measure" in call_names
+    assert call_names.index("connect") < call_names.index("close")
+    assert call_names.index("close") < call_names.index("measure")
+
+
 def test_run_test_marks_success_false_when_any_sample_fails(monkeypatch, framework):
     driver = mock_driver([make_sample(10.0), make_sample(error="timeout"), make_sample(12.0)])
     monkeypatch.setattr(
@@ -96,7 +113,7 @@ def test_run_test_unknown_ammeter_raises_keyerror(framework):
 
 def test_run_test_propagates_connection_error(monkeypatch, framework):
     driver = MagicMock(spec=AmmeterDriver)
-    driver.__enter__.side_effect = ConnectionError("device unreachable")
+    driver.connect.side_effect = ConnectionError("device unreachable")
     monkeypatch.setattr(
         "src.testing.test_framework.build_driver", lambda name, cfg: driver
     )
