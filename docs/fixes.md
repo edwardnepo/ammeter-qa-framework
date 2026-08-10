@@ -130,3 +130,24 @@ same name won't stack duplicate handlers.
 **Why:** This is the minimal fix to make the existing class actually do
 what it already claimed to do; a full logging redesign is deferred to
 whatever the new `src/` architecture builds.
+
+## 7. `load_config` had no error handling
+
+**Symptom:** A missing config file or a malformed `config.yaml` would
+propagate a raw `FileNotFoundError` or `yaml.YAMLError` with no context
+about which path failed, and no log trail.
+
+**Root cause:** `src/utils/config.py:load_config` wrapped `open()` and
+`yaml.safe_load()` with no `try`/`except` at all.
+
+**Fix:** Wrapped the read in `try`/`except`, catching `FileNotFoundError`
+and `yaml.YAMLError` specifically, logging the offending path via
+`logging.getLogger(__name__)`, and re-raising the original exception
+(no bare `except`, nothing swallowed). Also switched `open()` to
+`pathlib.Path.open()` and rewrote the (previously Hebrew) docstring in
+English with Args/Returns/Raises.
+
+**Why:** `FileNotFoundError` and `yaml.YAMLError` are already distinct,
+specific exception types — re-raising them after logging satisfies the
+"typed error result" requirement without introducing a new custom
+exception class the task doesn't need yet.
