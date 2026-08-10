@@ -10,6 +10,7 @@ import yaml
 
 from src.drivers.registry import DriverResolutionError
 from src.faults.injector import FaultInjectingDriver, FaultInjectionConfig
+from src.reporting.html_report import generate_html_report
 from src.testing.store import list_runs, load_run
 from src.testing.test_framework import AmmeterTestFramework
 from src.utils.config import load_config
@@ -43,6 +44,9 @@ def build_parser() -> argparse.ArgumentParser:
     compare_parser = subparsers.add_parser("compare", help="Compare two saved runs")
     compare_parser.add_argument("run_id_a", help="The first run_id (baseline)")
     compare_parser.add_argument("run_id_b", help="The second run_id (compared against the first)")
+
+    report_parser = subparsers.add_parser("report", help="Render a saved run to a self-contained HTML report")
+    report_parser.add_argument("run_id", help="The run_id to render")
 
     return parser
 
@@ -276,6 +280,40 @@ def _cmd_compare(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_report(args: argparse.Namespace) -> int:
+    """Handle `report <run_id>`.
+
+    Args:
+        args: Parsed CLI arguments (`args.config`, `args.run_id`).
+
+    Returns:
+        0 if the run was found and the HTML report was written, else 1.
+    """
+    try:
+        config = load_config(args.config)
+    except (FileNotFoundError, yaml.YAMLError) as e:
+        print(f"could not load config: {e}", file=sys.stderr)
+        return 1
+
+    result_management = config.get("result_management", {})
+    try:
+        run = load_run(args.run_id, result_management)
+    except (FileNotFoundError, json.JSONDecodeError) as e:
+        print(f"could not load run '{args.run_id}': {e}", file=sys.stderr)
+        return 1
+
+    results_dir = result_management.get("results_dir", "results")
+    output_dir = Path(results_dir) / "reports"
+    try:
+        report_path = generate_html_report(run, output_dir)
+    except OSError as e:
+        print(f"could not write report for '{args.run_id}': {e}", file=sys.stderr)
+        return 1
+
+    print(f"wrote {report_path}")
+    return 0
+
+
 def main(argv: Optional[List[str]] = None) -> int:
     """CLI entry point.
 
@@ -296,6 +334,8 @@ def main(argv: Optional[List[str]] = None) -> int:
         return _cmd_show(args)
     if args.command == "compare":
         return _cmd_compare(args)
+    if args.command == "report":
+        return _cmd_report(args)
 
     parser.error(f"unknown command: {args.command}")
     return 2

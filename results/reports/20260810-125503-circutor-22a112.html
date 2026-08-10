@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Ammeter QA report - 20260810-125503-circutor-22a112</title>
+<style>
+  body { font-family: -apple-system, Helvetica, Arial, sans-serif; margin: 2rem; color: #1a1a1a; background: #fafafa; }
+  h1 { font-size: 1.4rem; }
+  h2 { font-size: 1.1rem; margin-top: 2rem; }
+  table.stats { border-collapse: collapse; }
+  table.stats th, table.stats td { border: 1px solid #ccc; padding: 0.35rem 0.75rem; text-align: left; }
+  table.stats th { background: #eee; font-weight: 600; }
+  svg { background: #fff; border: 1px solid #ddd; }
+  .bar { fill: #4c78a8; }
+  .bar-label { font-size: 10px; fill: #333; }
+  .axis { stroke: #999; stroke-width: 1; }
+  .axis-label { font-size: 10px; fill: #555; }
+  .series-line { stroke: #4c78a8; stroke-width: 1.5; }
+  .point { fill: #4c78a8; }
+  .point-outlier { fill: #e45756; }
+  .point-failure { fill: #e45756; opacity: 0.6; }
+  .empty-message { font-size: 13px; fill: #888; }
+  .meta { color: #555; font-size: 0.9rem; }
+</style>
+</head>
+<body>
+<h1>Ammeter QA report</h1>
+<p class="meta">
+  Run ID: <code>20260810-125503-circutor-22a112</code><br>
+  Device: circutor<br>
+  Duration: 9.51s<br>
+  Jitter mean/max: 0.00345s / 0.00507s
+</p>
+
+<h2>Statistics</h2>
+<table class="stats">
+<tr><th>Samples</th><td>20</td></tr>
+<tr><th>Successes</th><td>20</td></tr>
+<tr><th>Failures</th><td>0</td></tr>
+<tr><th>Failure rate (%)</th><td>0.00</td></tr>
+<tr><th>Mean</th><td>0.0333</td></tr>
+<tr><th>Median</th><td>0.0342</td></tr>
+<tr><th>Stdev</th><td>0.0162</td></tr>
+<tr><th>Min</th><td>0.0044</td></tr>
+<tr><th>Max</th><td>0.0644</td></tr>
+<tr><th>Coefficient of variation (%)</th><td>48.56</td></tr>
+<tr><th>Outliers (iqr)</th><td>0</td></tr>
+</table>
+
+<h2>Value distribution</h2>
+<svg viewBox="0 0 640 280" width="640" height="280" role="img" aria-label="Histogram of successful measurement values"><rect x="40.0" y="160.0" width="54.0" height="80.0" class="bar" /><text x="68.0" y="156.0" class="bar-label" text-anchor="middle">2</text><rect x="96.0" y="200.0" width="54.0" height="40.0" class="bar" /><text x="124.0" y="196.0" class="bar-label" text-anchor="middle">1</text><rect x="152.0" y="160.0" width="54.0" height="80.0" class="bar" /><text x="180.0" y="156.0" class="bar-label" text-anchor="middle">2</text><rect x="208.0" y="160.0" width="54.0" height="80.0" class="bar" /><text x="236.0" y="156.0" class="bar-label" text-anchor="middle">2</text><rect x="264.0" y="120.0" width="54.0" height="120.0" class="bar" /><text x="292.0" y="116.0" class="bar-label" text-anchor="middle">3</text><rect x="320.0" y="160.0" width="54.0" height="80.0" class="bar" /><text x="348.0" y="156.0" class="bar-label" text-anchor="middle">2</text><rect x="376.0" y="40.0" width="54.0" height="200.0" class="bar" /><text x="404.0" y="36.0" class="bar-label" text-anchor="middle">5</text><rect x="432.0" y="200.0" width="54.0" height="40.0" class="bar" /><text x="460.0" y="196.0" class="bar-label" text-anchor="middle">1</text><rect x="488.0" y="200.0" width="54.0" height="40.0" class="bar" /><text x="516.0" y="196.0" class="bar-label" text-anchor="middle">1</text><rect x="544.0" y="200.0" width="54.0" height="40.0" class="bar" /><text x="572.0" y="196.0" class="bar-label" text-anchor="middle">1</text><line x1="40" y1="240" x2="600" y2="240" class="axis" /><text x="40" y="272" class="axis-label">0.0044</text><text x="600" y="272" class="axis-label" text-anchor="end">0.0644</text></svg>
+
+<h2>Time series</h2>
+<svg viewBox="0 0 640 280" width="640" height="280" role="img" aria-label="Time series of measurement values by sample index"><line x1="40" y1="240" x2="600" y2="240" class="axis" /><polyline points="40.0,66.7 69.5,240.0 98.9,80.7 128.4,151.4 157.9,169.5 187.4,144.7 216.8,169.5 246.3,102.9 275.8,103.7 305.3,40.0 334.7,135.8 364.2,136.7 393.7,111.8 423.2,194.7 452.6,147.6 482.1,217.1 511.6,231.0 541.1,193.2 570.5,119.9 600.0,114.6" class="series-line" fill="none" /><circle cx="40.0" cy="66.7" r="3" class="point" /><circle cx="69.5" cy="240.0" r="3" class="point" /><circle cx="98.9" cy="80.7" r="3" class="point" /><circle cx="128.4" cy="151.4" r="3" class="point" /><circle cx="157.9" cy="169.5" r="3" class="point" /><circle cx="187.4" cy="144.7" r="3" class="point" /><circle cx="216.8" cy="169.5" r="3" class="point" /><circle cx="246.3" cy="102.9" r="3" class="point" /><circle cx="275.8" cy="103.7" r="3" class="point" /><circle cx="305.3" cy="40.0" r="3" class="point" /><circle cx="334.7" cy="135.8" r="3" class="point" /><circle cx="364.2" cy="136.7" r="3" class="point" /><circle cx="393.7" cy="111.8" r="3" class="point" /><circle cx="423.2" cy="194.7" r="3" class="point" /><circle cx="452.6" cy="147.6" r="3" class="point" /><circle cx="482.1" cy="217.1" r="3" class="point" /><circle cx="511.6" cy="231.0" r="3" class="point" /><circle cx="541.1" cy="193.2" r="3" class="point" /><circle cx="570.5" cy="119.9" r="3" class="point" /><circle cx="600.0" cy="114.6" r="3" class="point" /></svg>
+</body>
+</html>

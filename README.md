@@ -119,9 +119,16 @@ invisible to the failure count.
 
 ### HTML reports
 
-`src/reporting/html_report.py` renders a saved run document into a
-self-contained HTML file (stats table plus hand-rolled SVG histogram and
+`report <run_id>` renders a saved run into a self-contained HTML file
+under `results/reports/` (stats table plus hand-rolled SVG histogram and
 time-series charts, no third-party dependency):
+
+```sh
+python -m src.cli report 20260810-133247-circutor-4a900c
+```
+
+`src/reporting/html_report.py::generate_html_report` can also be called
+directly if you need a different output directory or chart sizing:
 
 ```python
 from pathlib import Path

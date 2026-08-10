@@ -1,3 +1,4 @@
+from pathlib import Path
 from unittest.mock import MagicMock
 
 import pytest
@@ -229,6 +230,40 @@ def test_cmd_compare_config_load_failure_exits_1(monkeypatch, capsys):
     )
 
     exit_code = cli.main(["compare", "run-a", "run-b"])
+
+    assert exit_code == 1
+    assert "could not load config" in capsys.readouterr().err
+
+
+# --- report ------------------------------------------------------------
+
+
+def test_cmd_report_writes_html(seeded_config, capsys):
+    _seed_run(seeded_config["result_management"], run_id="run-3", device="greenlee")
+
+    exit_code = cli.main(["report", "run-3"])
+
+    assert exit_code == 0
+    out = capsys.readouterr().out
+    assert "run-3" in out
+    report_path = Path(seeded_config["result_management"]["results_dir"]) / "reports" / "run-3.html"
+    assert report_path.exists()
+    assert "run-3" in report_path.read_text(encoding="utf-8")
+
+
+def test_cmd_report_run_not_found(seeded_config, capsys):
+    exit_code = cli.main(["report", "does-not-exist"])
+
+    assert exit_code == 1
+    assert "could not load run 'does-not-exist'" in capsys.readouterr().err
+
+
+def test_cmd_report_config_load_failure_exits_1(monkeypatch, capsys):
+    monkeypatch.setattr(
+        "src.cli.load_config", lambda path: (_ for _ in ()).throw(FileNotFoundError("missing"))
+    )
+
+    exit_code = cli.main(["report", "run-1"])
 
     assert exit_code == 1
     assert "could not load config" in capsys.readouterr().err

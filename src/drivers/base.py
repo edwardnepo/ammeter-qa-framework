@@ -217,6 +217,10 @@ class AmmeterDriver(ABC):
             try:
                 sock = self._connect_once()
                 sock.sendall(self._command)
+                # Every emulator's reply is a single ASCII-formatted float
+                # (e.g. "0.1385852685772588"), never a stream or a large
+                # payload, so one bounded recv() is sufficient -- no
+                # framing/length-prefix protocol exists to loop against.
                 data = sock.recv(1024)
             except socket.timeout as e:
                 last_error = f"read timed out after {self._timeout}s"
